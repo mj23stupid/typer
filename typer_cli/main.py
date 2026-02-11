@@ -4,6 +4,10 @@ import argparse
 import sys
 
 from typer_cli.sentences import generate
+from typer_cli.profile import (
+    profile_exists, read_profile, create_profile, append_test,
+    post_race_stats,
+)
 
 # ── colors ───────────────────────────────────────────────────────────────────
 
@@ -239,6 +243,7 @@ def test(scr, ti, di):
 
     settings_y = 0
     hit_regions = []
+    user_name = read_profile().get("name", "")
 
     while True:
         now = time.time()
@@ -285,7 +290,9 @@ def test(scr, ti, di):
             putc(scr, timer_y, w, f"{tlimit}s", C_ACCENT, curses.A_BOLD)
             draw_text(scr, lines, typed, target, text_y, tx, aw, h)
             putc(scr, hint_y, w, "start typing...", C_DIM)
-            putc(scr, h - 1, w, "←/→ time   ↑/↓ difficulty   tab new words   esc quit", C_HINT)
+            putc(scr, h - 1, w, "s stats   tab new words   esc quit", C_HINT)
+            if user_name:
+                put(scr, h - 1, w - len(user_name) - 1, user_name, C_DIM)
         else:
             draw_stats(scr, stats_y, w, target, typed, elapsed, remain)
             draw_text(scr, lines, typed, target, text_y, tx, aw, h)
@@ -329,6 +336,8 @@ def test(scr, ti, di):
             continue
 
         if not started:
+            if k == ord('s'):
+                return "stats", ti, di
             # arrow keys for settings
             if k == curses.KEY_LEFT:
                 ti = (ti - 1) % len(TIMES)
@@ -368,9 +377,65 @@ def test(scr, ti, di):
     return calc_results(target, typed, elapsed), ti, di
 
 
+# ── name prompt ──────────────────────────────────────────────────────────────
+
+def name_prompt(scr, existing=""):
+    curses.curs_set(1)
+    scr.nodelay(False)
+    scr.timeout(-1)
+
+    buf = list(existing)
+    MAX_LEN = 20
+
+    while True:
+        scr.erase()
+        h, w = scr.getmaxyx()
+        y = max(1, h // 2 - 3)
+
+        title = "-- change name --" if existing else "-- welcome to typer --"
+        putc(scr, y, w, title, C_TITLE, curses.A_BOLD)
+        y += 2
+        putc(scr, y, w, "enter your name:", C_DIM)
+        y += 2
+
+        name_str = "".join(buf)
+        fx = cx(w, MAX_LEN + 4)
+        put(scr, y, fx, ">", C_ACCENT, curses.A_BOLD)
+        put(scr, y, fx + 2, name_str, C_TITLE)
+        try:
+            scr.move(y, fx + 2 + len(name_str))
+        except curses.error:
+            pass
+
+        y += 2
+        if existing:
+            putc(scr, y, w, "enter to confirm   esc cancel", C_HINT)
+        else:
+            putc(scr, y, w, "enter to confirm", C_HINT)
+
+        scr.refresh()
+
+        k = scr.getch()
+        if k == 27:
+            curses.curs_set(0)
+            return None
+        elif k in (10, 13):
+            name = "".join(buf).strip()
+            if name:
+                curses.curs_set(0)
+                return name
+        elif k in (curses.KEY_BACKSPACE, 127, 8):
+            if buf:
+                buf.pop()
+        elif 32 <= k <= 126 and len(buf) < MAX_LEN:
+            buf.append(chr(k))
+
+    curses.curs_set(0)
+
+
 # ── results screen ───────────────────────────────────────────────────────────
 
-def show_results(scr, r, ti, di):
+def show_results(scr, r, ti, di, race=None):
     curses.curs_set(0)
     scr.nodelay(False)
     scr.timeout(-1)
@@ -390,22 +455,34 @@ def show_results(scr, r, ti, di):
     has_errs = bool(r['errs'])
     acp = C_GOOD if r['acc'] >= 90 else C_BAD
 
+    # leaderboard data
+    top3 = race["top3"] if race else []
+    avg_delta = race["avg_delta"] if race else 0.0
+    new_rank = race["rank"] if race else None
+
     while True:
         scr.erase()
         h, w = scr.getmaxyx()
 
-        # content: title + big_wpm + acc + div + 3 stat rows + div + rating + mode + errs
-        content_h = 15 + (2 if has_errs else 0)
+        content_h = 21 + (2 if has_errs else 0)
         y = max(1, (h - content_h) // 2)
 
         # title
         putc(scr, y, w, "-- results --", C_TITLE, curses.A_BOLD)
         y += 2
 
-        # big numbers
-        putc(scr, y, w, f"{r['wpm']:.0f} wpm", C_ACCENT, curses.A_BOLD)
-        y += 1
-        putc(scr, y, w, f"{r['acc']:.1f}% acc", acp, curses.A_BOLD)
+        # big wpm + avg delta
+        wpm_str = f"{r['wpm']:.1f} wpm"
+        if avg_delta != 0:
+            sign = "+" if avg_delta > 0 else ""
+            delta_str = f"  {sign}{avg_delta:.1f} avg"
+            delta_cp = C_GOOD if avg_delta > 0 else C_BAD
+            total = wpm_str + delta_str
+            sx = cx(w, len(total))
+            put(scr, y, sx, wpm_str, C_ACCENT, curses.A_BOLD)
+            put(scr, y, sx + len(wpm_str), delta_str, delta_cp)
+        else:
+            putc(scr, y, w, wpm_str, C_ACCENT, curses.A_BOLD)
         y += 2
 
         # divider
@@ -413,27 +490,51 @@ def show_results(scr, r, ti, di):
         putc(scr, y, w, "-" * dw, C_BORDER)
         y += 2
 
-        # stats — two columns
-        lx = cx(w, dw)
-        rx = lx + dw // 2
-
-        def stat(row, label, val, cp, x):
-            put(scr, row, x, label, C_DIM)
-            put(scr, row, x + len(label), str(val), cp, curses.A_BOLD)
-
-        stat(y, "wpm  ", f"{r['wpm']:.1f}", C_ACCENT, lx)
-        stat(y, "raw  ", f"{r['raw']:.1f}", C_STAT, rx)
-        y += 1
-        stat(y, "acc  ", f"{r['acc']:.1f}%", acp, lx)
-        stat(y, "time ", f"{r['time']:.1f}s", C_ACCENT, rx)
-        y += 1
-        stat(y, "ok   ", str(r['ok']), C_GOOD, lx)
-        stat(y, "err  ", str(r['bad']), C_BAD, rx)
+        # stats — two columns, centered
+        gap = "     "
+        rows = [
+            ("wpm  ", f"{r['wpm']:.1f}", C_ACCENT, "raw  ", f"{r['raw']:.1f}", C_STAT),
+            ("acc  ", f"{r['acc']:.1f}%", acp,      "time ", f"{r['time']:.1f}s", C_ACCENT),
+            ("ok   ", str(r['ok']), C_GOOD,         "err  ", str(r['bad']), C_BAD),
+        ]
+        for l_label, l_val, l_cp, r_label, r_val, r_cp in rows:
+            line = l_label + l_val + gap + r_label + r_val
+            sx = cx(w, len(line))
+            put(scr, y, sx, l_label, C_DIM)
+            put(scr, y, sx + len(l_label), l_val, l_cp, curses.A_BOLD)
+            rx = sx + len(l_label) + len(l_val) + len(gap)
+            put(scr, y, rx, r_label, C_DIM)
+            put(scr, y, rx + len(r_label), r_val, r_cp, curses.A_BOLD)
+            y += 1
         y += 2
 
         # divider
         putc(scr, y, w, "-" * dw, C_BORDER)
         y += 2
+
+        # personal best leaderboard
+        if top3:
+            medals = ["1st", "2nd", "3rd"]
+            parts = []
+            for i, wpm in enumerate(top3):
+                parts.append((medals[i], f"{wpm:.0f}", i + 1 == new_rank))
+            # render: "1st 94   2nd 78   3rd 72"
+            line_parts = []
+            for medal, val, is_new in parts:
+                line_parts.append(f"{medal} {val}")
+            line = "   ".join(line_parts)
+            sx = cx(w, len(line))
+            px = sx
+            for i, (medal, val, is_new) in enumerate(parts):
+                put(scr, y, px, medal, C_DIM)
+                px += len(medal) + 1
+                cp = C_ACCENT if is_new else C_STAT
+                attr = curses.A_BOLD
+                put(scr, y, px, val, cp, attr)
+                if is_new:
+                    put(scr, y, px + len(val), "*", C_ACCENT)
+                px += len(val) + 3
+            y += 2
 
         # rating
         putc(scr, y, w, rating, rcp, curses.A_BOLD)
@@ -461,11 +562,147 @@ def show_results(scr, r, ti, di):
             return "quit"
 
 
+# ── stats screen ─────────────────────────────────────────────────────────────
+
+def show_stats(scr):
+    from typer_cli.profile import read_profile, set_name, compute_stats
+
+    curses.curs_set(0)
+    scr.nodelay(False)
+    scr.timeout(-1)
+
+    while True:
+        profile = read_profile()
+        stats = compute_stats(profile)
+
+        scr.erase()
+        h, w = scr.getmaxyx()
+
+        if h < 15 or w < 40:
+            try:
+                scr.addstr(0, 0, "terminal too small!")
+            except curses.error:
+                pass
+            scr.refresh()
+            k = scr.getch()
+            if k in (27, ord('q'), ord('Q')):
+                return
+            continue
+
+        dw = min(50, w - 10)
+        lx = cx(w, dw)
+        rx = lx + dw // 2
+
+        content_h = 22
+        y = max(1, (h - content_h) // 2)
+
+        # title
+        putc(scr, y, w, "-- stats --", C_TITLE, curses.A_BOLD)
+        y += 2
+
+        # name
+        putc(scr, y, w, stats["name"] or "(no name)", C_ACCENT, curses.A_BOLD)
+        y += 1
+        putc(scr, y, w, f"member since {stats['member_since']}", C_DIM)
+        y += 2
+
+        # divider
+        hline(scr, y, cx(w, dw), dw)
+        y += 2
+
+        if stats["tests_completed"] == 0:
+            putc(scr, y, w, "no tests yet -- start typing!", C_DIM)
+        else:
+            # tests + total time
+            put(scr, y, lx, "tests  ", C_DIM)
+            put(scr, y, lx + 7, str(stats["tests_completed"]), C_STAT, curses.A_BOLD)
+            put(scr, y, rx, "total time  ", C_DIM)
+            put(scr, y, rx + 12, stats["total_time_fmt"], C_STAT, curses.A_BOLD)
+            y += 1
+
+            # best wpm
+            put(scr, y, lx, "best   ", C_DIM)
+            if stats["best_wpm"] is not None:
+                put(scr, y, lx + 7, f"{stats['best_wpm']:.0f} wpm", C_ACCENT, curses.A_BOLD)
+                ctx = f"({stats['best_wpm_diff']}, {stats['best_wpm_date']})"
+                put(scr, y, rx, ctx, C_DIM)
+            y += 1
+
+            # avg wpm (last 10)
+            put(scr, y, lx, "avg    ", C_DIM)
+            if stats["avg_wpm_recent"] is not None:
+                put(scr, y, lx + 7, f"{stats['avg_wpm_recent']:.0f} wpm", C_STAT, curses.A_BOLD)
+                put(scr, y, rx, "(last 10 tests)", C_DIM)
+            y += 1
+
+            # avg accuracy
+            put(scr, y, lx, "acc    ", C_DIM)
+            if stats["avg_acc"] is not None:
+                acp = C_GOOD if stats["avg_acc"] >= 90 else C_BAD
+                put(scr, y, lx + 7, f"{stats['avg_acc']:.1f}%", acp, curses.A_BOLD)
+            y += 1
+
+            # streak
+            put(scr, y, lx, "streak ", C_DIM)
+            sv = stats["streak"]
+            scp = C_ACCENT if sv > 0 else C_DIM
+            put(scr, y, lx + 7, f"{sv} day{'s' if sv != 1 else ''}", scp, curses.A_BOLD)
+            y += 2
+
+            # divider
+            hline(scr, y, cx(w, dw), dw)
+            y += 2
+
+            # sparkline
+            if stats["sparkline"]:
+                label = "last 10  "
+                sl = stats["sparkline"]
+                sx = cx(w, len(label) + len(sl))
+                put(scr, y, sx, label, C_DIM)
+                put(scr, y, sx + len(label), sl, C_ACCENT, curses.A_BOLD)
+                y += 2
+
+                # divider
+                hline(scr, y, cx(w, dw), dw)
+                y += 2
+
+            # per-difficulty breakdown
+            diff_colors = {"easy": C_GOOD, "medium": C_STAT, "hard": C_BAD}
+            for diff_name in ("easy", "medium", "hard"):
+                diff_avg = stats["per_diff"].get(diff_name)
+                put(scr, y, lx, f"{diff_name:8s}", C_DIM)
+                if diff_avg is not None:
+                    put(scr, y, lx + 8, f"{diff_avg:.0f} wpm", diff_colors[diff_name], curses.A_BOLD)
+                else:
+                    put(scr, y, lx + 8, "--", C_DIM)
+                y += 1
+
+        # bottom hint
+        putc(scr, h - 1, w, "n change name   esc back", C_HINT)
+        scr.refresh()
+
+        k = scr.getch()
+        if k in (27, ord('q'), ord('Q')):
+            return
+        elif k == ord('n'):
+            new_name = name_prompt(scr, profile.get("name", ""))
+            if new_name is not None:
+                set_name(new_name)
+
+
 # ── main ─────────────────────────────────────────────────────────────────────
 
 def run(scr, args):
     init_colors()
     curses.curs_set(0)
+
+    # first-launch: prompt for name
+    if not profile_exists():
+        name = name_prompt(scr)
+        if name:
+            create_profile(name)
+        else:
+            create_profile("")
 
     ti = TIMES.index(args.time) if args.time and args.time in TIMES else 1
     di = DIFFS.index(args.diff) if args.diff and args.diff in DIFFS else 1
@@ -477,8 +714,14 @@ def run(scr, args):
             return
         if result == "restart":
             continue
+        if result == "stats":
+            show_stats(scr)
+            continue
 
-        action = show_results(scr, result, ti, di)
+        # completed test — save, compute leaderboard, show results
+        append_test(result, TIMES[ti], DIFFS[di])
+        race = post_race_stats(result['wpm'])
+        action = show_results(scr, result, ti, di, race)
         if action == "restart":
             continue
         elif action == "quit":
