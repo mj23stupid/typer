@@ -14,9 +14,11 @@ keywords = ["typing", "wpm", "terminal", "cli", "practice"]
 classifiers = [
     "Environment :: Console :: Curses",
     "Topic :: Games/Entertainment",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
 ]
+
+[tool.setuptools.packages.find]
+include = ["typecli*"]
 
 [project.scripts]
 typer = "typecli.main:entry"
