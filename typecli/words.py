@@ -1,276 +1,318 @@
-import random
+"""Categorized word banks for sentence generation."""
 
-EASY = [
-    "the", "be", "to", "of", "and", "a", "in", "it", "you", "that",
-    "he", "was", "for", "on", "are", "but", "not", "at", "by", "i",
-    "his", "they", "her", "she", "or", "we", "my", "one", "all", "do",
-    "if", "an", "up", "so", "no", "go", "me", "him", "as", "is",
-    "has", "us", "am", "our", "who", "its", "had", "how", "get", "got",
-    "did", "can", "may", "say", "see", "new", "now", "way", "use", "two",
-    "set", "run", "day", "big", "old", "end", "put", "own", "too", "any",
-    "ask", "try", "let", "far", "add", "low", "few", "off", "man", "men",
-    "top", "eye", "air", "cut", "hot", "red", "eat", "sat", "bed", "six",
-    "ten", "yet", "bit", "dog", "sun", "sit", "boy", "age", "car", "job",
-    "win", "fit", "cup", "map", "box", "arm", "art", "act", "hat", "key",
-    "lot", "pay", "sea", "war", "law", "oil", "dry", "lay", "yes", "fun",
-    "did", "ran", "met", "led", "hit", "son", "bad", "die", "fly", "sky",
-    "tax", "ice", "mix", "fix", "gap", "bag", "leg", "tip", "lip", "gas",
-    "bar", "pen", "mud", "log", "fan", "van", "cow", "raw", "pig", "dot",
-    "row", "pan", "pin", "nor", "pop", "rid", "tie", "jam", "joy", "sum",
-    "dam", "dug", "fog", "fur", "gut", "hen", "hut", "inn", "jar", "jug",
-    "kit", "lid", "mob", "nap", "net", "nod", "nun", "oak", "odd", "ore",
-    "pad", "peg", "pit", "pod", "pub", "rag", "ram", "rat", "rib", "rod",
-    "rug", "rut", "sap", "shy", "sin", "sip", "sob", "sow", "spy", "tab",
-    "tag", "tan", "tap", "tar", "tin", "toe", "ton", "toy", "tub", "tug",
-    "vet", "vow", "web", "wig", "wit", "woe", "yam", "zap", "zip", "zoo",
-    "this", "from", "with", "have", "will", "been", "what", "when", "your",
-    "were", "some", "them", "than", "each", "make", "like", "long", "look",
-    "time", "very", "just", "know", "take", "come", "more", "most", "only",
-    "over", "such", "also", "back", "work", "year", "give", "well", "good",
-    "high", "last", "keep", "same", "find", "here", "many", "much", "then",
-    "hand", "both", "does", "home", "even", "side", "name", "show", "help",
-    "part", "life", "live", "turn", "move", "play", "next", "read", "head",
-    "tell", "must", "call", "want", "need", "line", "kind", "word", "land",
-    "sure", "real", "feel", "hold", "open", "late", "hard", "mind", "best",
-    "door", "seem", "free", "face", "city", "tree", "talk", "food", "fish",
-    "rain", "fire", "dark", "cold", "blue", "step", "walk", "stop", "pick",
-    "ball", "song", "deep", "mark", "fill", "plan", "half", "draw", "east",
-    "fast", "rock", "wait", "pull", "boat", "bird", "care", "mile", "warm",
-    "hill", "iron", "gold", "moon", "star", "ship", "bear", "deer", "gray",
-    "cool", "drop", "fall", "farm", "fish", "wood", "wide", "wild", "rose",
-    "ring", "ride", "root", "salt", "sand", "seed", "snow", "soft", "soil",
-    "soul", "wind", "bone", "burn", "camp", "card", "coat", "cook", "copy",
-    "deal", "dust", "earn", "edge", "fair", "flag", "flat", "flow", "fool",
-    "gift", "glad", "grow", "hang", "hate", "hide", "hunt", "jump", "kick",
-    "king", "kiss", "knee", "lake", "leaf", "lean", "lift", "list", "load",
-    "lock", "lord", "loss", "luck", "mail", "mass", "meat", "milk", "miss",
-    "mood", "neck", "nose", "note", "pack", "page", "pair", "pale", "palm",
-    "park", "path", "peak", "pink", "pool", "pour", "pray", "pure", "push",
-    "race", "rank", "rare", "rest", "rice", "rich", "roll", "roof", "rope",
-    "rush", "safe", "sail", "save", "seat", "seek", "sell", "shot", "shut",
-    "sign", "sing", "sink", "slip", "slow", "snap", "sock", "sort", "spot",
-    "stem", "stir", "suit", "swim", "tail", "tall", "tape", "task", "tear",
-    "test", "thin", "till", "tool", "tour", "trap", "tube", "twin", "vast",
-    "vote", "wake", "wall", "wash", "wave", "weak", "wear", "week", "whom",
-    "wine", "wing", "wire", "wise", "wood", "wrap", "yard", "zone",
+# ── nouns (singular) ─────────────────────────────────────────────────────────
+
+NOUNS_EASY = [
+    "cat", "dog", "bird", "fish", "tree", "road", "sun", "moon", "rain",
+    "book", "door", "house", "wall", "room", "bed", "chair", "table", "lamp",
+    "cup", "hat", "coat", "shoe", "bag", "box", "key", "bell", "boat", "car",
+    "bus", "hill", "lake", "farm", "park", "shop", "town", "school", "road",
+    "path", "gate", "yard", "roof", "fire", "wind", "snow", "sky", "star",
+    "rock", "leaf", "hand", "face", "eye", "song", "game", "ball", "toy",
+    "boy", "girl", "man", "child", "baby", "king", "cook", "nurse", "clerk",
+    "fox", "bear", "deer", "wolf", "frog", "duck", "goat", "horse", "mouse",
+    "ship", "train", "plane", "bridge", "clock", "phone", "light", "flag",
+    "gift", "cake", "soup", "bread", "milk", "rose", "seed", "nest", "pond",
+    "coin", "rope", "drum", "ring", "map", "pen", "page", "sign", "step",
+    "meal", "dream", "smile", "voice", "story", "color", "night", "river",
+    "stone", "cloud", "grass", "floor", "plate", "glass", "shirt", "dress",
 ]
 
-MEDIUM = [
-    "about", "after", "again", "being", "below", "bring", "build", "carry",
-    "cause", "chain", "chair", "cheap", "check", "chief", "child", "china",
-    "chose", "civil", "claim", "class", "clean", "clear", "climb", "clock",
-    "close", "coach", "coast", "color", "count", "court", "cover", "crash",
-    "crazy", "cream", "crime", "cross", "crowd", "dance", "death", "doubt",
-    "dozen", "draft", "drain", "drama", "drawn", "dream", "dress", "drift",
-    "drink", "drive", "eager", "early", "earth", "eight", "elite", "empty",
-    "enemy", "enjoy", "enter", "equal", "error", "event", "every", "exact",
-    "exist", "extra", "faith", "false", "fault", "favor", "fence", "fewer",
-    "fiber", "field", "fifth", "fifty", "fight", "final", "first", "fixed",
-    "flash", "fleet", "flesh", "float", "flood", "floor", "fluid", "focus",
-    "force", "forth", "found", "frame", "fresh", "front", "fruit", "giant",
-    "given", "glass", "globe", "going", "grace", "grade", "grain", "grand",
-    "grant", "grass", "grave", "great", "green", "gross", "group", "grown",
-    "guard", "guess", "guide", "happy", "heart", "heavy", "honor", "horse",
-    "hotel", "house", "human", "ideal", "image", "index", "inner", "input",
-    "issue", "joint", "judge", "juice", "knife", "knock", "known", "label",
-    "large", "laser", "later", "laugh", "layer", "learn", "least", "leave",
-    "legal", "level", "light", "limit", "local", "logic", "loose", "lover",
-    "lower", "lucky", "lunch", "magic", "major", "maker", "manor", "march",
-    "match", "maybe", "mayor", "media", "mercy", "metal", "meter", "might",
-    "minor", "minus", "mixed", "model", "money", "month", "moral", "motor",
-    "mount", "mouse", "mouth", "movie", "music", "named", "nerve", "never",
-    "night", "noise", "north", "novel", "nurse", "occur", "ocean", "offer",
-    "often", "order", "other", "outer", "owned", "owner", "paint", "panel",
-    "paper", "party", "patch", "pause", "peace", "penny", "phase", "phone",
-    "photo", "piano", "piece", "pilot", "pitch", "place", "plain", "plane",
-    "plant", "plate", "plaza", "point", "pound", "power", "press", "price",
-    "pride", "prime", "print", "prior", "prize", "proof", "proud", "prove",
-    "queen", "quiet", "quite", "quote", "radio", "raise", "range", "rapid",
-    "ratio", "reach", "ready", "refer", "reign", "relax", "reply", "rider",
-    "rifle", "right", "rigid", "rival", "river", "robot", "rocky", "roman",
-    "rough", "round", "route", "royal", "rural", "saint", "salad", "sauce",
-    "scale", "scene", "scope", "score", "sense", "serve", "seven", "shade",
-    "shaft", "shake", "shall", "shame", "shape", "share", "sharp", "sheet",
-    "shelf", "shell", "shift", "shirt", "shock", "shoot", "shore", "short",
-    "shout", "sight", "silly", "since", "sixth", "sixty", "skill", "sleep",
-    "slice", "slide", "small", "smart", "smell", "smile", "smoke", "solar",
-    "solid", "solve", "sorry", "sound", "south", "space", "spare", "speak",
-    "speed", "spend", "spill", "split", "sport", "spray", "squad", "stack",
-    "staff", "stage", "stake", "stand", "start", "state", "steam", "steel",
-    "steep", "stick", "still", "stock", "stone", "store", "storm", "story",
-    "stove", "strip", "stuck", "study", "stuff", "style", "sugar", "suite",
-    "super", "swear", "sweep", "sweet", "swing", "sword", "table", "taste",
-    "teach", "teeth", "thank", "theme", "thick", "thing", "think", "third",
-    "throw", "tight", "tired", "title", "today", "total", "touch", "tough",
-    "tower", "trace", "track", "trade", "trail", "train", "trait", "treat",
-    "trend", "trial", "tribe", "trick", "troop", "truck", "truly", "trump",
-    "trust", "truth", "twice", "twist", "uncle", "under", "union", "unite",
-    "until", "upper", "upset", "urban", "usage", "usual", "valid", "value",
-    "video", "virus", "visit", "vital", "vocal", "voice", "waste", "watch",
-    "water", "wheel", "where", "which", "while", "white", "whole", "whose",
-    "woman", "world", "worry", "worse", "worst", "worth", "would", "wound",
-    "write", "wrong", "wrote", "yield", "young", "youth",
-    "accept", "access", "across", "action", "active", "actual", "advice",
-    "affair", "affect", "afford", "agency", "agenda", "almost", "always",
-    "amount", "animal", "annual", "answer", "anyone", "anyway", "appeal",
-    "appear", "around", "arrive", "artist", "assume", "attack", "attend",
-    "august", "author", "battle", "beauty", "become", "before", "behind",
-    "belong", "beside", "beyond", "bitter", "blanket", "border", "bother",
-    "bottom", "branch", "breath", "bridge", "bright", "broken", "budget",
-    "burden", "butter", "button", "camera", "cancel", "carbon", "career",
-    "castle", "cattle", "caught", "center", "chance", "change", "charge",
-    "chosen", "church", "circle", "closed", "closer", "coffee", "column",
-    "combat", "common", "comply", "corner", "costly", "cotton", "couple",
-    "course", "cousin", "create", "credit", "crisis", "custom", "damage",
-    "danger", "dealer", "debate", "decade", "decide", "defeat", "defend",
-    "define", "degree", "demand", "denial", "depend", "deputy", "desert",
-    "design", "desire", "detail", "detect", "device", "devote", "differ",
-    "dinner", "direct", "divide", "doctor", "domain", "double", "driven",
-    "driver", "during", "easily", "eating", "editor", "effect", "effort",
-    "eighth", "either", "eleven", "emerge", "empire", "enable", "ending",
-    "energy", "engage", "engine", "enough", "ensure", "entire", "equity",
-    "escape", "estate", "ethnic", "evolve", "exceed", "except", "expand",
-    "expect", "expert", "export", "expose", "extend", "fabric", "factor",
-    "fairly", "fallen", "family", "famous", "father", "fellow", "female",
-    "figure", "finger", "finish", "flower", "flying", "follow", "forget",
-    "formal", "former", "foster", "fourth", "freely", "freeze", "friend",
-    "frozen", "future", "gained", "garden", "gather", "gender", "gentle",
-    "global", "golden", "govern", "ground", "growth", "guilty", "guitar",
-    "handle", "happen", "hardly", "health", "heaven", "height", "hereby",
-    "hidden", "highly", "holder", "honest", "horror", "hunger", "hunter",
-    "ignore", "impact", "import", "impose", "income", "indeed", "infant",
-    "inform", "injury", "inning", "insist", "intact", "intend", "intent",
-    "invest", "island", "itself", "junior", "jungle", "justice", "killer",
-    "kindly", "knight", "ladder", "largely", "latest", "latter", "launch",
-    "lawyer", "layout", "leader", "league", "lender", "lesson", "letter",
-    "likely", "listen", "little", "living", "lovely", "mainly", "making",
-    "manage", "manner", "margin", "marked", "market", "master", "matter",
-    "medium", "member", "memory", "mental", "merely", "method", "middle",
-    "mighty", "miller", "mirror", "mobile", "modern", "modest", "moment",
-    "motion", "mostly", "murder", "museum", "mutual", "myself", "narrow",
-    "nation", "nature", "nearby", "nearly", "neatly", "needed", "nicely",
-    "nobody", "normal", "notice", "notion", "number", "object", "obtain",
-    "occupy", "office", "online", "oppose", "option", "orange", "origin",
-    "others", "outfit", "output", "parent", "partly", "patent", "people",
-    "period", "permit", "person", "phrase", "planet", "player", "please",
-    "plenty", "pocket", "poetry", "poison", "police", "policy", "prefer",
-    "prison", "profit", "prompt", "proper", "proven", "public", "pursue",
-    "puzzle", "racial", "random", "rarely", "rather", "rating", "reader",
-    "really", "reason", "recall", "record", "reduce", "reform", "regard",
-    "region", "reject", "relate", "relief", "remain", "remedy", "remote",
-    "remove", "rental", "repair", "repeat", "report", "rescue", "resist",
-    "resort", "result", "retail", "retain", "retire", "return", "reveal",
-    "review", "revolt", "reward", "rhythm", "riding", "rising", "robust",
-    "ruling", "rumor", "sacred", "safety", "sailor", "salary", "sample",
-    "scared", "scheme", "school", "screen", "search", "season", "second",
-    "secret", "sector", "secure", "select", "senior", "serial", "settle",
-    "severe", "shadow", "shared", "shield", "should", "shower", "signal",
-    "silver", "simple", "simply", "singer", "single", "sister", "slight",
-    "slowly", "smooth", "social", "solely", "source", "speech", "spirit",
-    "spread", "spring", "square", "stable", "status", "steady", "strain",
-    "strand", "stream", "street", "stress", "strict", "strike", "string",
-    "stripe", "stroke", "strong", "studio", "submit", "sudden", "suffer",
-    "summer", "summit", "supply", "surely", "survey", "switch", "symbol",
-    "system", "tackle", "talent", "target", "temple", "tenant", "tender",
-    "terror", "thanks", "theirs", "thirty", "though", "thread", "threat",
-    "throat", "throne", "thrown", "timber", "tissue", "tongue", "tonight",
-    "treaty", "tribal", "tunnel", "twelve", "unique", "unless", "unlike",
-    "unrest", "update", "useful", "valley", "vastly", "victim", "viewer",
-    "virtue", "vision", "visual", "volume", "Walker", "warmth", "weapon",
-    "weekly", "weight", "welfare", "widely", "window", "winner", "winter",
-    "wisdom", "within", "wonder", "worker", "worthy", "writer",
+NOUNS_MEDIUM = [
+    "garden", "village", "harbor", "mountain", "library", "market", "temple",
+    "castle", "forest", "island", "valley", "desert", "meadow", "canyon",
+    "palace", "cottage", "chapel", "tavern", "museum", "prison", "tower",
+    "fountain", "orchard", "vineyard", "glacier", "volcano", "plateau",
+    "captain", "soldier", "merchant", "painter", "scholar", "servant",
+    "stranger", "teacher", "farmer", "hunter", "sailor", "doctor",
+    "traveler", "prisoner", "guardian", "builder", "driver", "author",
+    "journal", "portrait", "lantern", "blanket", "curtain", "pillow",
+    "candle", "mirror", "carpet", "ribbon", "basket", "anchor", "compass",
+    "trumpet", "violin", "hammer", "shovel", "ladder", "barrel", "wagon",
+    "feather", "pebble", "crystal", "shadow", "whisper", "silence",
+    "thunder", "breeze", "rainbow", "sunset", "horizon", "twilight",
+    "promise", "secret", "memory", "fortune", "mystery", "journey",
+    "creature", "phantom", "spirit", "legend", "victory", "treasure",
+    "harvest", "shelter", "passage", "kingdom", "empire", "chamber",
+    "surface", "pattern", "signal", "method", "reason", "problem",
+    "answer", "moment", "feeling", "opinion", "message", "purpose",
+    "weather", "season", "morning", "evening", "century", "chapter",
 ]
 
-HARD = [
-    "abandon", "ability", "absence", "absolve", "abstain", "academy",
-    "achieve", "acquire", "address", "adjourn", "admiral", "advance",
-    "adverse", "affable", "afflict", "alcohol", "allegiance", "alliance",
-    "alright", "ambiguity", "analogy", "analyze", "ancient", "anxiety",
-    "applaud", "appoint", "approve", "aptitude", "aquarium", "archive",
-    "arduous", "artisan", "assault", "attempt", "audible", "average",
-    "balcony", "baptize", "baroque", "barrier", "basilisk", "battery",
-    "beneath", "benign", "bicycle", "bizarre", "blatant", "bouquet",
-    "boycott", "breadth", "brigade", "brittle", "broaden", "bruised",
-    "buffalo", "buoyant", "bureaucracy", "cabinet", "caliber",
-    "campaign", "capacity", "casualty", "catalyst", "category",
-    "cautious", "ceremony", "champion", "chandelier", "chronicle",
-    "circuitry", "civilian", "coalesce", "cognitive", "coherent",
-    "collapse", "collision", "combustion", "committee", "companion",
-    "competent", "complexion", "compliant", "component", "composite",
-    "compulsory", "concealed", "conceptual", "conducive", "confiscate",
-    "congenial", "conjugate", "conscript", "consensus", "construct",
-    "contagious", "contemplate", "contiguous", "continuum", "contradict",
-    "controversy", "conundrum", "convalesce", "cooperate", "copyright",
-    "corrugated", "courageous", "courteous", "craftsman", "crescendo",
-    "criterion", "culminate", "cultivate", "cumbersome", "curriculum",
-    "cynicism", "deceptive", "decibel", "decipher", "decompose",
-    "defendant", "deficient", "deliberate", "delicately", "democracy",
-    "demonstrate", "departure", "depreciate", "descendant", "desperate",
-    "determine", "detriment", "devastate", "diagnosis", "diaphragm",
-    "dichotomy", "diligence", "dimension", "dinosaur", "diplomacy",
-    "disappoint", "discipline", "discourse", "discovery", "dismantle",
-    "disparage", "dissipate", "distinguish", "diversify", "elaborate",
-    "eloquence", "elsewhere", "embarrass", "emphasize", "empirical",
-    "encompass", "encounter", "encourage", "endeavour", "enumerate",
-    "ephemeral", "equipment", "equivalent", "establish", "estranged",
-    "etymology", "euphemism", "evaporate", "evolution", "exacerbate",
-    "exaggerate", "exasperate", "exceedingly", "exquisite", "extravagant",
-    "fabricate", "fahrenheit", "fascinate", "fiduciary", "fluctuate",
-    "fluorescent", "forbearance", "formidable", "fortuitous", "franchise",
-    "fraternity", "frivolous", "fulfillment", "galvanize", "garrulous",
-    "genealogy", "genuinely", "gestation", "glamorous", "governance",
-    "gratitude", "gregarious", "grotesque", "guarantee", "gymnasium",
-    "hallucinate", "handkerchief", "harassment", "harmonious", "hazardous",
-    "hemorrhage", "hereditary", "hibernate", "hierarchy", "hitchhike",
-    "homogeneous", "humiliate", "hurricane", "hydraulic", "hyperbole",
-    "hypocrite", "hypothesis", "idiosyncrasy", "illegitimate", "illuminate",
-    "illustrate", "immaculate", "immediately", "impeccable", "implication",
-    "improvise", "inaugurate", "incandescent", "inconceivable", "indictment",
-    "indigenous", "indispensable", "infrastructure", "innocuous",
-    "innovation", "inoculate", "insufferable", "intelligence", "intercept",
-    "interrogate", "intoxicate", "intrinsic", "iridescent", "irrelevant",
-    "itinerary", "jeopardize", "journalism", "juxtapose", "kaleidoscope",
-    "khaki", "labyrinth", "lackluster", "legitimate", "lieutenant",
-    "liquidate", "longevity", "ludicrous", "luminescent", "luxurious",
-    "magnificent", "maintenance", "malevolent", "maneuver", "manipulate",
-    "manufacture", "manuscript", "masquerade", "meander", "melancholy",
-    "metamorphosis", "meticulous", "microscope", "millennium", "miscellaneous",
-    "mischievous", "misdemeanor", "monopolize", "monotonous", "moustache",
-    "mnemonic", "mystique", "nauseous", "necessary", "negligible",
-    "negotiate", "nonchalant", "nonetheless", "nostalgia", "nuisance",
-    "obedience", "obligation", "obnoxious", "obscure", "observatory",
-    "obstinate", "occasionally", "omniscient", "onomatopoeia", "opaque",
-    "opportunity", "orchestrate", "ostracize", "outrageous", "overwhelm",
-    "pageantry", "palindrome", "panoramic", "parachute", "paradox",
-    "paraphernalia", "parliament", "particular", "patronize", "peculiar",
-    "pedestrian", "peripheral", "perpetuate", "perseverance", "pessimism",
-    "pharmaceutical", "phenomenon", "philanthropy", "picturesque",
-    "plagiarize", "plausible", "pneumonia", "poignant", "posthumous",
-    "precedent", "prejudice", "preposterous", "prerequisite", "prevalent",
-    "privilege", "procrastinate", "propaganda", "psychology", "punctual",
-    "quarantine", "questionnaire", "quintessential", "rambunctious",
-    "reconnaissance", "reconcile", "referendum", "reminiscence",
-    "remunerate", "rendezvous", "repertoire", "reprehensible",
-    "resplendent", "resuscitate", "reverberate", "rhetorical",
-    "sacrilegious", "sandwiched", "sarcasm", "saxophone", "scrupulous",
-    "seismograph", "silhouette", "simultaneous", "skepticism",
-    "sophisticated", "sovereignty", "spaghetti", "spontaneous",
-    "stethoscope", "straightforward", "subconscious", "subsequent",
-    "substantially", "subterfuge", "surveillance", "susceptible",
-    "sympathize", "synchronize", "temperament", "therapeutic",
-    "thermometer", "thorough", "threshold", "topography",
-    "totalitarian", "tournament", "trajectory", "tranquility",
-    "treacherous", "tremendous", "trespassing", "triumphant",
-    "tyrannical", "ubiquitous", "unanimously", "unbelievable",
-    "underestimate", "unfortunately", "unnecessary", "unprecedented",
-    "unquestionable", "upholstery", "vaccination", "ventriloquist",
-    "vocabulary", "vulnerable", "wheelbarrow", "whisper",
-    "xylophone", "yesterday", "zealous",
+NOUNS_HARD = [
+    "labyrinth", "silhouette", "archipelago", "chandelier", "protagonist",
+    "manuscript", "phenomenon", "hemisphere", "catastrophe", "bureaucracy",
+    "surveillance", "renaissance", "melancholy", "philosophy", "controversy",
+    "temperament", "consequence", "predicament", "architecture", "atmosphere",
+    "equilibrium", "paradox", "metaphor", "hypothesis", "rhetoric",
+    "algorithm", "infrastructure", "sovereignty", "aristocracy", "expedition",
+    "observatory", "constellation", "jurisdiction", "predecessor", "beneficiary",
+    "connoisseur", "entrepreneur", "acquaintance", "correspondent",
+    "accomplishment", "circumstance", "reconnaissance", "discrepancy",
+    "idiosyncrasy", "kaleidoscope", "paraphernalia", "quintessence",
 ]
 
-DIFFICULTIES = {"easy": EASY, "medium": MEDIUM, "hard": HARD}
+# ── nouns (plural) ───────────────────────────────────────────────────────────
+
+NOUNS_PL_EASY = [
+    "cats", "dogs", "birds", "trees", "roads", "books", "doors", "walls",
+    "rooms", "cups", "hats", "shoes", "bags", "keys", "bells", "boats",
+    "cars", "hills", "lakes", "farms", "shops", "towns", "paths", "gates",
+    "stars", "rocks", "songs", "games", "toys", "ships", "trains", "clocks",
+    "gifts", "cakes", "roses", "seeds", "coins", "drums", "rings", "maps",
+    "pages", "signs", "steps", "meals", "dreams", "voices", "stories",
+    "clouds", "stones", "plates", "floors", "children", "horses", "foxes",
+    "wolves", "mice", "leaves", "nights", "rivers", "colors", "smiles",
+]
+
+NOUNS_PL_MEDIUM = [
+    "gardens", "villages", "mountains", "libraries", "markets", "temples",
+    "castles", "forests", "islands", "valleys", "deserts", "meadows",
+    "palaces", "towers", "fountains", "orchards", "glaciers", "soldiers",
+    "merchants", "scholars", "strangers", "travelers", "guardians",
+    "journals", "portraits", "lanterns", "curtains", "candles", "mirrors",
+    "feathers", "crystals", "shadows", "whispers", "promises", "secrets",
+    "memories", "mysteries", "journeys", "creatures", "legends", "treasures",
+    "kingdoms", "chambers", "surfaces", "patterns", "signals", "reasons",
+    "problems", "answers", "moments", "feelings", "opinions", "messages",
+    "seasons", "mornings", "evenings", "centuries", "chapters", "victories",
+]
+
+NOUNS_PL_HARD = [
+    "labyrinths", "silhouettes", "manuscripts", "catastrophes", "phenomena",
+    "hemispheres", "consequences", "predicaments", "atmospheres", "paradoxes",
+    "metaphors", "hypotheses", "algorithms", "expeditions", "constellations",
+    "accomplishments", "circumstances", "discrepancies", "kaleidoscopes",
+]
+
+# ── proper names ─────────────────────────────────────────────────────────────
+
+NAMES = [
+    "Alice", "James", "Clara", "Henry", "Elena", "Thomas", "Sarah", "Oliver",
+    "Grace", "William", "Emma", "Daniel", "Sophie", "Marcus", "Violet",
+    "Arthur", "Helen", "George", "Anna", "Edward", "Maria", "Charles",
+    "Rose", "Peter", "Julia", "Samuel", "Lucy", "David", "Margaret",
+    "Robert", "Eleanor", "Frank", "Ruth", "Leon", "Ada", "Felix",
+    "Iris", "Hugo", "Vera", "Max", "Nora", "Paul", "Lily", "Oscar",
+    "June", "Miles", "Ella", "Simon", "Jane", "Victor", "Eve", "Martin",
+    "Hazel", "Albert", "Ivy", "Louis", "Alma", "Walter", "Flora", "Leo",
+]
+
+# ── verbs (past tense) ──────────────────────────────────────────────────────
+
+VERBS_PAST_EASY = [
+    "saw", "ran", "sat", "ate", "had", "got", "put", "let", "cut", "hit",
+    "set", "won", "led", "met", "held", "told", "read", "kept", "gave",
+    "took", "came", "made", "went", "said", "knew", "felt", "left", "found",
+    "lost", "heard", "paid", "sent", "fell", "drew", "grew", "hung", "laid",
+    "rode", "rose", "sang", "sank", "shut", "slid", "sold", "wore", "woke",
+    "liked", "loved", "hoped", "moved", "used", "lived", "played", "asked",
+    "tried", "walked", "looked", "turned", "called", "needed", "worked",
+    "pulled", "picked", "pushed", "dropped", "washed", "filled", "saved",
+]
+
+VERBS_PAST_MEDIUM = [
+    "opened", "closed", "carried", "studied", "noticed", "watched",
+    "reached", "crossed", "entered", "climbed", "planted", "painted",
+    "gathered", "offered", "promised", "believed", "whispered", "wandered",
+    "returned", "followed", "finished", "covered", "searched", "removed",
+    "decided", "expected", "answered", "demanded", "explored", "imagined",
+    "measured", "observed", "prepared", "repeated", "revealed", "selected",
+    "shattered", "balanced", "captured", "defended", "escaped", "fastened",
+    "honored", "inspired", "launched", "mastered", "polished", "recalled",
+    "rescued", "scattered", "trembled", "troubled", "vanished", "welcomed",
+    "arranged", "borrowed", "composed", "discovered", "embraced", "examined",
+    "traveled", "delivered", "abandoned", "collected", "destroyed", "survived",
+]
+
+VERBS_PAST_HARD = [
+    "acknowledged", "accompanied", "administered", "anticipated", "approximated",
+    "articulated", "characterized", "commemorated", "comprehended", "concentrated",
+    "consolidated", "contemplated", "contributed", "deliberated", "deteriorated",
+    "distinguished", "endeavored", "exaggerated", "extinguished", "facilitated",
+    "illuminated", "inaugurated", "manipulated", "necessitated", "orchestrated",
+    "overwhelmed", "persevered", "proliferated", "rationalized", "reverberated",
+    "scrutinized", "surrendered", "sympathized", "transcended", "underestimated",
+]
+
+# ── verbs (3rd person present) ───────────────────────────────────────────────
+
+VERBS_PRES_EASY = [
+    "sees", "runs", "sits", "eats", "gets", "puts", "lets", "cuts", "hits",
+    "sets", "wins", "leads", "meets", "holds", "tells", "reads", "keeps",
+    "gives", "takes", "comes", "makes", "goes", "says", "knows", "feels",
+    "finds", "hears", "pays", "sends", "falls", "draws", "grows", "rides",
+    "sings", "shuts", "sells", "wears", "likes", "loves", "hopes", "moves",
+    "uses", "lives", "plays", "asks", "tries", "walks", "looks", "turns",
+    "calls", "needs", "works", "pulls", "picks", "drops", "fills", "saves",
+]
+
+VERBS_PRES_MEDIUM = [
+    "opens", "closes", "carries", "studies", "notices", "watches",
+    "reaches", "crosses", "enters", "climbs", "gathers", "offers",
+    "promises", "believes", "whispers", "wanders", "returns", "follows",
+    "finishes", "covers", "searches", "removes", "decides", "expects",
+    "answers", "demands", "explores", "imagines", "measures", "observes",
+    "prepares", "repeats", "reveals", "selects", "captures", "defends",
+    "escapes", "inspires", "launches", "polishes", "recalls", "rescues",
+    "scatters", "trembles", "vanishes", "welcomes", "arranges", "composes",
+    "discovers", "examines", "embraces", "delivers", "collects", "survives",
+]
+
+# ── verbs (base/infinitive) ─────────────────────────────────────────────────
+
+VERBS_BASE_EASY = [
+    "see", "run", "sit", "eat", "get", "put", "let", "cut", "hit", "set",
+    "win", "lead", "meet", "hold", "tell", "read", "keep", "give", "take",
+    "come", "make", "go", "say", "know", "feel", "find", "hear", "pay",
+    "send", "fall", "draw", "grow", "ride", "sing", "shut", "sell", "wear",
+    "like", "love", "hope", "move", "use", "live", "play", "ask", "try",
+    "walk", "look", "turn", "call", "need", "work", "pull", "pick", "drop",
+    "fill", "save", "rest", "wait", "help", "pass", "stay", "hide", "swim",
+]
+
+VERBS_BASE_MEDIUM = [
+    "open", "close", "carry", "study", "notice", "watch", "reach", "cross",
+    "enter", "climb", "gather", "offer", "promise", "believe", "whisper",
+    "wander", "return", "follow", "finish", "cover", "search", "remove",
+    "decide", "expect", "answer", "demand", "explore", "imagine", "measure",
+    "observe", "prepare", "repeat", "reveal", "select", "capture", "defend",
+    "escape", "inspire", "launch", "polish", "recall", "rescue", "scatter",
+    "tremble", "vanish", "welcome", "arrange", "compose", "discover",
+    "examine", "embrace", "deliver", "collect", "survive", "approach",
+    "consider", "establish", "maintain", "remember", "understand", "continue",
+]
+
+# ── verbs (gerund / -ing) ───────────────────────────────────────────────────
+
+VERBS_ING_EASY = [
+    "running", "sitting", "eating", "getting", "cutting", "hitting",
+    "winning", "reading", "keeping", "making", "going", "saying",
+    "looking", "walking", "turning", "calling", "working", "playing",
+    "trying", "living", "moving", "using", "hoping", "loving",
+    "pulling", "picking", "dropping", "filling", "saving", "hiding",
+    "waiting", "resting", "helping", "singing", "riding", "drawing",
+]
+
+VERBS_ING_MEDIUM = [
+    "opening", "closing", "carrying", "studying", "watching", "climbing",
+    "reaching", "crossing", "entering", "gathering", "offering", "believing",
+    "whispering", "wandering", "returning", "following", "finishing",
+    "covering", "searching", "removing", "deciding", "expecting",
+    "answering", "demanding", "exploring", "imagining", "measuring",
+    "observing", "preparing", "repeating", "revealing", "selecting",
+    "capturing", "defending", "escaping", "inspiring", "polishing",
+    "recalling", "rescuing", "trembling", "vanishing", "arranging",
+    "composing", "discovering", "examining", "embracing", "delivering",
+]
+
+# ── adjectives ───────────────────────────────────────────────────────────────
+
+ADJ_EASY = [
+    "big", "small", "old", "new", "long", "short", "tall", "wide", "thin",
+    "fast", "slow", "hot", "cold", "warm", "cool", "soft", "hard", "dark",
+    "bright", "clean", "dry", "wet", "flat", "deep", "high", "low", "full",
+    "empty", "rich", "poor", "kind", "fair", "safe", "wild", "calm", "bold",
+    "glad", "sad", "lost", "free", "real", "true", "good", "bad", "nice",
+    "fine", "red", "blue", "green", "white", "black", "gray", "brown",
+    "pale", "round", "sharp", "plain", "fresh", "clear", "sweet", "young",
+    "quiet", "loud", "strong", "weak", "quick", "rare", "late", "early",
+]
+
+ADJ_MEDIUM = [
+    "gentle", "bitter", "golden", "silver", "hollow", "narrow", "frozen",
+    "hidden", "broken", "silent", "ancient", "modern", "distant", "curious",
+    "careful", "fearful", "grateful", "honest", "humble", "clever", "proper",
+    "sudden", "formal", "simple", "steady", "subtle", "elegant", "fragile",
+    "massive", "patient", "private", "sacred", "strange", "typical", "urgent",
+    "useful", "violent", "visible", "willing", "worried", "familiar",
+    "peaceful", "powerful", "pleasant", "splendid", "terrible", "fortunate",
+    "important", "beautiful", "dangerous", "difficult", "delicate", "graceful",
+    "brilliant", "charming", "dreadful", "faithful", "generous", "innocent",
+    "restless", "tireless", "watchful", "colorful", "cheerful", "doubtful",
+]
+
+ADJ_HARD = [
+    "meticulous", "exquisite", "formidable", "ubiquitous", "treacherous",
+    "magnificent", "spontaneous", "inconspicuous", "unprecedented",
+    "extraordinary", "incomprehensible", "sophisticated", "conscientious",
+    "idiosyncratic", "quintessential", "unequivocal", "ostentatious",
+    "surreptitious", "contemptible", "indefatigable", "imperceptible",
+    "irreconcilable", "magnanimous", "perspicacious", "phantasmagorical",
+]
+
+# ── adverbs ──────────────────────────────────────────────────────────────────
+
+ADV_EASY = [
+    "very", "just", "well", "also", "here", "then", "soon", "still", "never",
+    "always", "often", "once", "again", "away", "down", "up", "now", "fast",
+    "hard", "far", "near", "back", "even", "only", "almost", "quite",
+]
+
+ADV_MEDIUM = [
+    "quickly", "slowly", "gently", "quietly", "softly", "loudly", "calmly",
+    "boldly", "gladly", "sadly", "deeply", "firmly", "purely", "rarely",
+    "simply", "merely", "nearly", "barely", "hardly", "clearly", "closely",
+    "finally", "greatly", "largely", "neatly", "partly", "safely", "surely",
+    "wholly", "widely", "eagerly", "swiftly", "bravely", "proudly",
+    "sharply", "brightly", "carefully", "silently", "suddenly", "properly",
+    "steadily", "patiently", "honestly", "entirely", "politely", "precisely",
+    "gracefully", "endlessly", "restlessly", "faithfully", "peacefully",
+]
+
+ADV_HARD = [
+    "meticulously", "spontaneously", "simultaneously", "unquestionably",
+    "conscientiously", "indiscriminately", "inconspicuously", "magnanimously",
+    "surreptitiously", "extraordinarily", "incomprehensibly", "unequivocally",
+    "disproportionately", "incontrovertibly", "characteristically",
+]
+
+# ── prepositions ─────────────────────────────────────────────────────────────
+
+PREPOSITIONS = [
+    "in", "on", "at", "by", "to", "for", "from", "with", "near", "past",
+    "through", "across", "around", "along", "above", "below", "under",
+    "beside", "behind", "beyond", "between", "toward", "against", "among",
+    "beneath", "inside", "outside", "within", "without", "before", "after",
+]
+
+# ── time phrases ─────────────────────────────────────────────────────────────
+
+TIME_PHRASES = [
+    "that morning", "that evening", "that night", "that afternoon",
+    "last summer", "last winter", "last spring", "every morning",
+    "every evening", "every winter", "for many years", "for a long time",
+    "at dawn", "at dusk", "at midnight", "at noon", "on that day",
+    "in those days", "long ago", "years later", "the next morning",
+    "the following day", "one quiet evening", "on a cold night",
+    "during the storm", "before sunrise", "after sunset", "by then",
+    "at that moment", "without warning", "all at once", "once again",
+]
+
+# ── pool builder ─────────────────────────────────────────────────────────────
+
+def _pool(easy, medium=None, hard=None, difficulty="medium"):
+    """Build a cumulative word pool based on difficulty."""
+    if difficulty == "easy":
+        return easy
+    elif difficulty == "medium":
+        return easy + (medium or [])
+    else:
+        return easy + (medium or []) + (hard or [])
 
 
-def generate(count=80, difficulty="medium"):
-    pool = DIFFICULTIES.get(difficulty, MEDIUM)
-    return " ".join(random.choice(pool) for _ in range(count))
+def get_pools(difficulty="medium"):
+    """Return all word category pools for a given difficulty."""
+    return {
+        "noun": _pool(NOUNS_EASY, NOUNS_MEDIUM, NOUNS_HARD, difficulty),
+        "nouns": _pool(NOUNS_PL_EASY, NOUNS_PL_MEDIUM, NOUNS_PL_HARD, difficulty),
+        "name": NAMES,
+        "v_past": _pool(VERBS_PAST_EASY, VERBS_PAST_MEDIUM, VERBS_PAST_HARD, difficulty),
+        "v_pres": _pool(VERBS_PRES_EASY, VERBS_PRES_MEDIUM, difficulty=difficulty),
+        "v_base": _pool(VERBS_BASE_EASY, VERBS_BASE_MEDIUM, difficulty=difficulty),
+        "v_ing": _pool(VERBS_ING_EASY, VERBS_ING_MEDIUM, difficulty=difficulty),
+        "adj": _pool(ADJ_EASY, ADJ_MEDIUM, ADJ_HARD, difficulty),
+        "adv": _pool(ADV_EASY, ADV_MEDIUM, ADV_HARD, difficulty),
+        "prep": PREPOSITIONS,
+        "time": TIME_PHRASES,
+    }
