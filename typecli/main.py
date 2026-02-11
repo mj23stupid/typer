@@ -54,7 +54,6 @@ def putc(win, y, w, text, cp=0, attr=0):
 
 
 def box(win, y, x, h, w):
-    cp = curses.color_pair(C_BORDER)
     put(win, y, x, "╭", C_BORDER)
     put(win, y, x + w - 1, "╮", C_BORDER)
     put(win, y + h - 1, x, "╰", C_BORDER)
@@ -67,22 +66,8 @@ def box(win, y, x, h, w):
         put(win, y + j, x + w - 1, "│", C_BORDER)
 
 
-def logo(win, y, w):
-    art = [
-        " ▄▄▄▄▄ ▄· ▄▌ ▄▄▄·▄▄▄ .▄▄▄  ",
-        " •██  ▐█▪██▌▐█ ▄█▀▄.▀·▀▄ █·",
-        "  ▐█.▪▐█▌▐█▪ ██▀·▐▀▀▪▄▐▀▀▄ ",
-        "  ▐█▌·▐█▀·.▐█▪·•▐█▄▄▌▐█•█▌",
-        "  ▀▀▀  ▀ •  .▀    ▀▀▀ .▀  ▀",
-    ]
-    for i, line in enumerate(art):
-        putc(win, y + i, w, line, C_ACCENT, curses.A_BOLD)
-    return y + len(art) + 1
-
-
 def wrap(text, width):
-    lines = []
-    cur = ""
+    lines, cur = [], ""
     for word in text.split(" "):
         test = f"{cur} {word}" if cur else word
         if len(test) <= width:
@@ -96,77 +81,65 @@ def wrap(text, width):
     return lines
 
 
-# ── menu ─────────────────────────────────────────────────────────────────────
+# ── settings ─────────────────────────────────────────────────────────────────
 
-def menu(scr):
-    curses.curs_set(0)
-    modes = [
-        ("15s", 15, None),
-        ("30s", 30, None),
-        ("60s", 60, None),
-        ("25 words", 0, 25),
-        ("50 words", 0, 50),
-    ]
-    sel = 1
+TIMES = [15, 30, 60, 120]
+DIFFS = ["easy", "medium", "hard"]
 
-    while True:
-        scr.erase()
-        h, w = scr.getmaxyx()
-        if h < 15 or w < 50:
-            scr.addstr(0, 0, "terminal too small (need 50x15)")
-            scr.refresh()
-            scr.getch()
-            continue
 
-        y = logo(scr, max(0, h // 2 - 8), w)
-        y += 1
-        putc(scr, y, w, "pick your mode", C_TITLE, curses.A_BOLD)
-        y += 2
+def draw_settings(scr, y, w, ti, di, locked):
+    """Draw the inline settings bar: 15  30  60  120  |  easy  medium  hard"""
+    parts = []
+    total = 0
+    for i, t in enumerate(TIMES):
+        label = str(t)
+        parts.append(("time", i, label))
+        total += len(label) + 2
+    total += 3  # separator
+    for i, d in enumerate(DIFFS):
+        parts.append(("diff", i, d))
+        total += len(d) + 2
 
-        for i, (label, _, _) in enumerate(modes):
-            if i == sel:
-                putc(scr, y + i, w, f"  ▸ {label}  ", C_ACCENT, curses.A_BOLD)
+    x = cx(w, total)
+    for kind, idx, label in parts:
+        if kind == "time" and idx == 0:
+            pass  # first item, no prefix spacing needed
+        if kind == "diff" and idx == 0:
+            put(scr, y, x, " | ", C_BORDER)
+            x += 3
+
+        if kind == "time":
+            active = idx == ti
+        else:
+            active = idx == di
+
+        if active:
+            if locked:
+                put(scr, y, x, label, C_DIM, curses.A_BOLD)
             else:
-                putc(scr, y + i, w, f"    {label}  ", C_DIM)
-
-        putc(scr, y + len(modes) + 2, w, "↑/↓ select   enter start   esc quit", C_HINT)
-        scr.refresh()
-
-        k = scr.getch()
-        if k == curses.KEY_UP:
-            sel = (sel - 1) % len(modes)
-        elif k == curses.KEY_DOWN:
-            sel = (sel + 1) % len(modes)
-        elif k in (curses.KEY_ENTER, 10, 13):
-            _, t, wc = modes[sel]
-            return t, wc
-        elif k == 27:
-            return None, None
+                put(scr, y, x, label, C_ACCENT, curses.A_BOLD)
+        else:
+            put(scr, y, x, label, C_DIM)
+        x += len(label) + 2
 
 
-# ── typing test ──────────────────────────────────────────────────────────────
+# ── stats helpers ────────────────────────────────────────────────────────────
 
-def wpm(target, typed, elapsed):
+def calc_wpm(target, typed, elapsed):
     if elapsed < 0.5:
         return "-"
     ok = sum(1 for i in range(min(len(typed), len(target))) if typed[i] == target[i])
     return f"{(ok / 5) / (elapsed / 60):.0f}"
 
 
-def raw_wpm(typed, elapsed):
-    if elapsed < 0.5:
-        return "-"
-    return f"{(len(typed) / 5) / (elapsed / 60):.0f}"
-
-
-def acc(target, typed):
+def calc_acc(target, typed):
     if not typed:
         return "-"
     ok = sum(1 for i in range(min(len(typed), len(target))) if typed[i] == target[i])
     return f"{ok / len(typed) * 100:.1f}%"
 
 
-def results(target, typed, elapsed):
+def calc_results(target, typed, elapsed):
     n = min(len(typed), len(target))
     ok = sum(1 for i in range(n) if typed[i] == target[i])
     bad = n - ok
@@ -182,11 +155,12 @@ def results(target, typed, elapsed):
                 chars=len(typed), time=elapsed, errs=errs)
 
 
+# ── text drawing ─────────────────────────────────────────────────────────────
+
 def draw_text(scr, lines, typed, target, sy, sx, aw, sh):
     pos = len(typed)
     maxl = sh - sy - 4
-    cline = 0
-    ci = 0
+    cline, ci = 0, 0
     for i, line in enumerate(lines):
         if ci + len(line) >= pos:
             cline = i
@@ -218,13 +192,17 @@ def draw_text(scr, lines, typed, target, sy, sx, aw, sh):
         off += len(line) + 1
 
 
-def test(scr, tlimit, wcount):
+# ── main test loop ───────────────────────────────────────────────────────────
+
+def test(scr, ti, di):
     curses.curs_set(0)
     scr.nodelay(True)
     scr.timeout(50)
 
-    wc = wcount if wcount else max(80, (tlimit or 30) * 3)
-    target = generate(wc)
+    tlimit = TIMES[ti]
+    diff = DIFFS[di]
+    wc = max(80, tlimit * 3)
+    target = generate(wc, diff)
     typed = []
     started = False
     t0 = 0.0
@@ -232,9 +210,8 @@ def test(scr, tlimit, wcount):
     while True:
         now = time.time()
         elapsed = (now - t0) if started else 0.0
-        remain = (tlimit - elapsed) if tlimit else None
-        done = (tlimit and started and elapsed >= tlimit) or \
-               (wcount and not tlimit and len(typed) >= len(target))
+        remain = tlimit - elapsed
+        done = started and elapsed >= tlimit
         if done:
             break
 
@@ -244,55 +221,93 @@ def test(scr, tlimit, wcount):
             scr.addstr(0, 0, "terminal too small!")
             scr.refresh()
             if scr.getch() == 27:
-                return None
+                return None, ti, di
             continue
 
-        # stats
-        _wpm = wpm(target, typed, elapsed)
-        _acc = acc(target, typed)
-        _raw = raw_wpm(typed, elapsed)
-        ts = f"{max(0, remain):.0f}s" if remain is not None else f"{elapsed:.0f}s"
+        # settings bar
+        draw_settings(scr, 1, w, ti, di, started)
 
-        by = 2
-        bar = f"  {_wpm} wpm   {_acc} acc   {ts}  "
-        bx = cx(w, len(bar) + 4)
-        box(scr, by - 1, bx, 3, len(bar) + 4)
+        # stats (only show once started)
+        by = 3
+        if started:
+            _wpm = calc_wpm(target, typed, elapsed)
+            _acc = calc_acc(target, typed)
+            ts = f"{max(0, remain):.0f}s"
 
-        px = bx + 3
-        put(scr, by, px, _wpm, C_ACCENT, curses.A_BOLD)
-        put(scr, by, px + len(_wpm), " wpm   ", C_DIM)
-        px += len(_wpm) + 7
-        ac = C_GOOD if _acc not in ("-",) and float(_acc.rstrip("%")) >= 90 else C_BAD if _acc != "-" else C_DIM
-        put(scr, by, px, _acc, ac, curses.A_BOLD)
-        put(scr, by, px + len(_acc), " acc   ", C_DIM)
-        px += len(_acc) + 7
-        tc = C_BAD if remain is not None and remain < 5 else C_ACCENT
-        put(scr, by, px, ts, tc, curses.A_BOLD)
+            bar = f"  {_wpm} wpm   {_acc} acc   {ts}  "
+            bx = cx(w, len(bar) + 4)
+            box(scr, by, bx, 3, len(bar) + 4)
+
+            px = bx + 3
+            put(scr, by + 1, px, _wpm, C_ACCENT, curses.A_BOLD)
+            put(scr, by + 1, px + len(_wpm), " wpm   ", C_DIM)
+            px += len(_wpm) + 7
+            ac = C_GOOD if _acc not in ("-",) and float(_acc.rstrip("%")) >= 90 else C_BAD if _acc != "-" else C_DIM
+            put(scr, by + 1, px, _acc, ac, curses.A_BOLD)
+            put(scr, by + 1, px + len(_acc), " acc   ", C_DIM)
+            px += len(_acc) + 7
+            tc = C_BAD if remain < 5 else C_ACCENT
+            put(scr, by + 1, px, ts, tc, curses.A_BOLD)
+        else:
+            # countdown placeholder
+            ts = f"{tlimit}s"
+            putc(scr, by + 1, w, ts, C_ACCENT, curses.A_BOLD)
 
         # text
         aw = min(w - 8, 72)
         tx = cx(w, aw)
-        ty = by + 4
+        ty = by + 5
         lines = wrap(target, aw)
         draw_text(scr, lines, typed, target, ty, tx, aw, h)
 
+        # hints
         if not started:
-            putc(scr, ty - 2, w, "start typing...", C_DIM)
-        putc(scr, h - 2, w, "tab restart   esc menu", C_HINT)
+            putc(scr, ty - 1, w, "start typing...", C_DIM)
+            putc(scr, h - 2, w, "←/→ time   ↑/↓ difficulty   tab new words   esc quit", C_HINT)
+        else:
+            putc(scr, h - 2, w, "tab restart   esc quit", C_HINT)
+
         scr.refresh()
 
+        # input
         k = scr.getch()
         if k == -1:
             continue
         if k == 27:
-            return None
-        if k == 9:
-            return "restart"
-        if done:
-            continue
-        if not started and k not in (curses.KEY_RESIZE, -1):
+            return None, ti, di
+        if k == 9:  # tab
+            return "restart", ti, di
+
+        if not started:
+            # settings keys (before test starts)
+            if k == curses.KEY_LEFT:
+                ti = (ti - 1) % len(TIMES)
+                tlimit = TIMES[ti]
+                target = generate(max(80, tlimit * 3), DIFFS[di])
+                typed = []
+                continue
+            elif k == curses.KEY_RIGHT:
+                ti = (ti + 1) % len(TIMES)
+                tlimit = TIMES[ti]
+                target = generate(max(80, tlimit * 3), DIFFS[di])
+                typed = []
+                continue
+            elif k == curses.KEY_UP:
+                di = (di - 1) % len(DIFFS)
+                target = generate(max(80, tlimit * 3), DIFFS[di])
+                typed = []
+                continue
+            elif k == curses.KEY_DOWN:
+                di = (di + 1) % len(DIFFS)
+                target = generate(max(80, tlimit * 3), DIFFS[di])
+                typed = []
+                continue
+
+        # typing
+        if not started and 32 <= k <= 126:
             started = True
             t0 = time.time()
+
         if k in (curses.KEY_BACKSPACE, 127, 8):
             if typed:
                 typed.pop()
@@ -300,12 +315,12 @@ def test(scr, tlimit, wcount):
             typed.append(chr(k))
 
     elapsed = time.time() - t0 if started else 0.001
-    return results(target, typed, elapsed)
+    return calc_results(target, typed, elapsed), ti, di
 
 
 # ── results screen ───────────────────────────────────────────────────────────
 
-def show_results(scr, r):
+def show_results(scr, r, ti, di):
     curses.curs_set(0)
     scr.nodelay(False)
     scr.timeout(-1)
@@ -361,14 +376,16 @@ def show_results(scr, r):
             top = sorted(r['errs'].items(), key=lambda x: -x[1])[:6]
             putc(scr, ry, w, "missed: " + "  ".join(f"'{c}'x{n}" for c, n in top), C_DIM)
 
-        putc(scr, h - 2, w, "tab restart   esc menu   q quit", C_HINT)
+        # mode reminder
+        putc(scr, h - 4, w, f"{TIMES[ti]}s  {DIFFS[di]}", C_DIM)
+        putc(scr, h - 2, w, "tab restart   esc new test   q quit", C_HINT)
         scr.refresh()
 
         k = scr.getch()
         if k == 9:
             return "restart"
         elif k == 27:
-            return "menu"
+            return "new"
         elif k in (ord('q'), ord('Q')):
             return "quit"
 
@@ -378,30 +395,26 @@ def show_results(scr, r):
 def run(scr, args):
     init_colors()
     curses.curs_set(0)
-    tlimit = args.time
-    wcount = args.words
-    skip = args.time is not None or args.words is not None
+
+    # default: 30s, medium
+    ti = TIMES.index(args.time) if args.time and args.time in TIMES else 1
+    di = DIFFS.index(args.diff) if args.diff and args.diff in DIFFS else 1
 
     while True:
-        if not skip:
-            tlimit, wcount = menu(scr)
-            if tlimit is None and wcount is None:
-                return
-        skip = False
+        result, ti, di = test(scr, ti, di)
 
-        while True:
-            r = test(scr, tlimit, wcount)
-            if r is None:
-                break
-            if r == "restart":
-                continue
-            a = show_results(scr, r)
-            if a == "restart":
-                continue
-            elif a == "quit":
-                return
-            else:
-                break
+        if result is None:
+            return
+        if result == "restart":
+            continue
+
+        action = show_results(scr, result, ti, di)
+        if action == "restart":
+            continue
+        elif action == "quit":
+            return
+        else:  # "new" — loop back to test with settings bar
+            continue
 
 
 def entry():
@@ -410,14 +423,11 @@ def entry():
         description="typer — typing practice in your terminal",
     )
     parser.add_argument("-t", "--time", type=int, metavar="SEC",
-                        help="timed mode (15, 30, 60)")
-    parser.add_argument("-w", "--words", type=int, metavar="N",
-                        help="word count mode (25, 50)")
+                        help="time in seconds (15, 30, 60, 120)")
+    parser.add_argument("-d", "--diff", type=str, metavar="LEVEL",
+                        choices=["easy", "medium", "hard"],
+                        help="difficulty (easy, medium, hard)")
     args = parser.parse_args()
-
-    if args.time and args.words:
-        print("pick one: --time or --words, not both")
-        sys.exit(1)
 
     try:
         curses.wrapper(lambda scr: run(scr, args))
