@@ -259,7 +259,7 @@ def test(scr, ti, di, update_info=None):
         if h < 10 or w < 40:
             scr.addstr(0, 0, "terminal too small!")
             scr.refresh()
-            if scr.getch() == 27:
+            if scr.getch() == 17:  # ctrl+q
                 return None, ti, di
             continue
 
@@ -294,7 +294,7 @@ def test(scr, ti, di, update_info=None):
             if update_info and update_info["update_available"]:
                 notice = f"v{update_info['latest']} available: {update_info['update_cmd']}"
                 putc(scr, h - 2, w, notice, C_DIM)
-            putc(scr, h - 1, w, "s stats   tab new words   esc quit", C_HINT)
+            putc(scr, h - 1, w, "s stats   tab new words   ^q quit", C_HINT)
             ver = f"v{update_info['version']}" if update_info else ""
             if ver:
                 put(scr, h - 1, 1, ver, C_DIM)
@@ -303,7 +303,7 @@ def test(scr, ti, di, update_info=None):
         else:
             draw_stats(scr, stats_y, w, target, typed, elapsed, remain)
             draw_text(scr, lines, typed, target, text_y, tx, aw, h)
-            putc(scr, h - 1, w, "tab restart   esc quit", C_HINT)
+            putc(scr, h - 1, w, "tab restart   ^q quit", C_HINT)
 
         scr.refresh()
 
@@ -311,7 +311,7 @@ def test(scr, ti, di, update_info=None):
         k = scr.getch()
         if k == -1:
             continue
-        if k == 27:
+        if k == 17:  # ctrl+q
             return None, ti, di
         if k == 9:  # tab
             return "restart", ti, di
@@ -560,15 +560,13 @@ def show_results(scr, r, ti, di, race=None):
             putc(scr, y, w, "missed: " + "  ".join(f"'{c}'x{n}" for c, n in top), C_DIM)
 
         # bottom hint
-        putc(scr, h - 1, w, "tab restart   esc new test   q quit", C_HINT)
+        putc(scr, h - 1, w, "tab home", C_HINT)
         scr.refresh()
 
         k = scr.getch()
-        if k == 9:
-            return "restart"
-        elif k == 27:
-            return "new"
-        elif k in (ord('q'), ord('Q')):
+        if k == 9:  # tab
+            return "home"
+        elif k == 17:  # ctrl+q
             return "quit"
 
 
@@ -734,11 +732,9 @@ def run(scr, args):
         append_test(result, TIMES[ti], DIFFS[di])
         race = post_race_stats(result['wpm'])
         action = show_results(scr, result, ti, di, race)
-        if action == "restart":
-            continue
-        elif action == "quit":
+        if action == "quit":
             return
-        else:
+        else:  # "home"
             continue
 
 

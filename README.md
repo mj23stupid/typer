@@ -29,13 +29,12 @@ typer -t 15 -d easy # quick easy warmup
 
 | Key       | Action              |
 |-----------|---------------------|
-| `tab`     | restart test        |
-| `esc`     | quit / back         |
+| `tab`     | restart / home      |
+| `ctrl+q`  | quit                |
 | `←` `→`  | change time         |
 | `↑` `↓`  | change difficulty   |
 | `click`   | click time/difficulty|
 | `s`       | stats               |
-| `q`       | quit (results)      |
 
 ## Features
 
