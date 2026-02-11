@@ -30,16 +30,40 @@ typer -t 15 -d easy # quick easy warmup
 | Key       | Action              |
 |-----------|---------------------|
 | `tab`     | restart test        |
-| `esc`     | quit                |
+| `esc`     | quit / back         |
 | `←` `→`  | change time         |
 | `↑` `↓`  | change difficulty   |
 | `click`   | click time/difficulty|
+| `s`       | stats               |
 | `q`       | quit (results)      |
+
+## Features
+
+- Timed tests: 15s, 30s, 60s, 120s
+- Three difficulty levels (easy, medium, hard)
+- Live WPM and accuracy while typing
+- Personal stats: best WPM, streaks, per-difficulty averages, sparkline
+- User profiles stored locally at `~/.config/typer/`
+- Passive update check — shows update command if a new version is available
 
 ## Install from source
 
 ```
 pip install .
+```
+
+## Update
+
+Homebrew:
+
+```
+brew update && brew upgrade typer
+```
+
+pip:
+
+```
+pip install --upgrade typer-cli-tool
 ```
 
 ## Zero dependencies
