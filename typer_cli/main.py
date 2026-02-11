@@ -53,17 +53,8 @@ def putc(win, y, w, text, cp=0, attr=0):
     put(win, y, cx(w, len(text)), text, cp, attr)
 
 
-def box(win, y, x, h, w):
-    put(win, y, x, "╭", C_BORDER)
-    put(win, y, x + w - 1, "╮", C_BORDER)
-    put(win, y + h - 1, x, "╰", C_BORDER)
-    put(win, y + h - 1, x + w - 1, "╯", C_BORDER)
-    for i in range(1, w - 1):
-        put(win, y, x + i, "─", C_BORDER)
-        put(win, y + h - 1, x + i, "─", C_BORDER)
-    for j in range(1, h - 1):
-        put(win, y + j, x, "│", C_BORDER)
-        put(win, y + j, x + w - 1, "│", C_BORDER)
+def hline(win, y, x, n, cp=C_BORDER):
+    put(win, y, x, "-" * n, cp)
 
 
 def wrap(text, width):
@@ -175,21 +166,22 @@ def draw_stats(scr, y, w, target, typed, elapsed, remain):
     _acc = calc_acc(target, typed)
     ts = f"{max(0, remain):.0f}s"
 
-    bar = f"  {_wpm} wpm   {_acc} acc   {ts}  "
-    bw = len(bar) + 4
-    bx = cx(w, bw)
-    box(scr, y, bx, 3, bw)
+    # build the bar as: "  30 wpm   100.0% acc   24s  "
+    bar = f"{_wpm} wpm   {_acc} acc   {ts}"
+    sx = cx(w, len(bar))
 
-    px = bx + 3
-    put(scr, y + 1, px, _wpm, C_ACCENT, curses.A_BOLD)
-    put(scr, y + 1, px + len(_wpm), " wpm   ", C_DIM)
-    px += len(_wpm) + 7
+    px = sx
+    put(scr, y, px, _wpm, C_ACCENT, curses.A_BOLD)
+    px += len(_wpm)
+    put(scr, y, px, " wpm   ", C_DIM)
+    px += 7
     ac = C_GOOD if _acc not in ("-",) and float(_acc.rstrip("%")) >= 90 else C_BAD if _acc != "-" else C_DIM
-    put(scr, y + 1, px, _acc, ac, curses.A_BOLD)
-    put(scr, y + 1, px + len(_acc), " acc   ", C_DIM)
-    px += len(_acc) + 7
+    put(scr, y, px, _acc, ac, curses.A_BOLD)
+    px += len(_acc)
+    put(scr, y, px, " acc   ", C_DIM)
+    px += 7
     tc = C_BAD if remain < 5 else C_ACCENT
-    put(scr, y + 1, px, ts, tc, curses.A_BOLD)
+    put(scr, y, px, ts, tc, curses.A_BOLD)
 
 
 # ── text drawing ─────────────────────────────────────────────────────────────
@@ -270,25 +262,18 @@ def test(scr, ti, di):
         lines = wrap(target, aw)
         text_vis = min(3, len(lines))
 
-        # ── compute centered layout ──
-        if not started:
-            # idle: logo + settings + timer_label + gap + text + hint
-            content_h = LOGO_H + 2 + 1 + 2 + text_vis + 3
-            top = max(0, (h - content_h) // 2)
+        # ── compute layout — text stays fixed at vertical center ──
+        text_y = max(1, (h - text_vis) // 2)
 
-            logo_y = top
-            settings_y = top + LOGO_H + 2
-            timer_y = settings_y + 2
-            text_y = timer_y + 2
+        if not started:
+            # place logo, settings, timer ABOVE the text
+            timer_y = text_y - 2
+            settings_y = timer_y - 2
+            logo_y = settings_y - LOGO_H - 1
             hint_y = text_y + text_vis + 1
         else:
-            # typing: settings + stats_box + gap + text + hint
-            content_h = 1 + 4 + 1 + text_vis + 2
-            top = max(0, (h - content_h) // 2)
-
-            settings_y = top
-            stats_y = top + 2
-            text_y = stats_y + 4
+            # place stats ABOVE the text
+            stats_y = text_y - 2
             hint_y = text_y + text_vis + 1
 
         tx = cx(w, aw)
@@ -302,7 +287,6 @@ def test(scr, ti, di):
             putc(scr, hint_y, w, "start typing...", C_DIM)
             putc(scr, h - 1, w, "←/→ time   ↑/↓ difficulty   tab new words   esc quit", C_HINT)
         else:
-            hit_regions = draw_settings(scr, settings_y, w, ti, di, True)
             draw_stats(scr, stats_y, w, target, typed, elapsed, remain)
             draw_text(scr, lines, typed, target, text_y, tx, aw, h)
             putc(scr, h - 1, w, "tab restart   esc quit", C_HINT)
@@ -391,62 +375,80 @@ def show_results(scr, r, ti, di):
     scr.nodelay(False)
     scr.timeout(-1)
 
+    # pre-compute rating
+    if r['acc'] >= 97 and r['wpm'] >= 80:
+        rating, rcp = "blazing", C_ACCENT
+    elif r['acc'] >= 95 and r['wpm'] >= 60:
+        rating, rcp = "great", C_GOOD
+    elif r['acc'] >= 90:
+        rating, rcp = "solid", C_STAT
+    elif r['acc'] >= 80:
+        rating, rcp = "keep practicing", C_DIM
+    else:
+        rating, rcp = "slow down, focus on accuracy", C_BAD
+
+    has_errs = bool(r['errs'])
+    acp = C_GOOD if r['acc'] >= 90 else C_BAD
+
     while True:
         scr.erase()
         h, w = scr.getmaxyx()
 
-        # centered layout: title + wpm + stats_box + bar + rating + errs + hint
-        has_errs = bool(r['errs'])
-        content_h = 2 + 2 + 8 + 2 + 2 + (2 if has_errs else 0) + 3
+        # content: title + big_wpm + acc + div + 3 stat rows + div + rating + mode + errs
+        content_h = 15 + (2 if has_errs else 0)
         y = max(1, (h - content_h) // 2)
 
-        putc(scr, y, w, "── results ──", C_TITLE, curses.A_BOLD)
+        # title
+        putc(scr, y, w, "-- results --", C_TITLE, curses.A_BOLD)
         y += 2
+
+        # big numbers
         putc(scr, y, w, f"{r['wpm']:.0f} wpm", C_ACCENT, curses.A_BOLD)
+        y += 1
+        putc(scr, y, w, f"{r['acc']:.1f}% acc", acp, curses.A_BOLD)
         y += 2
 
-        bw = min(52, w - 4)
-        bx = cx(w, bw)
-        box(scr, y, bx, 8, bw)
-        c1 = bx + 3
-        c2 = bx + bw // 2 + 2
-        ry = y + 1
+        # divider
+        dw = min(38, w - 10)
+        putc(scr, y, w, "-" * dw, C_BORDER)
+        y += 2
 
-        def sr(label, val, cp, col, row):
-            put(scr, row, col, f"{label}: ", C_DIM)
-            put(scr, row, col + len(label) + 2, str(val), cp, curses.A_BOLD)
+        # stats — two columns
+        lx = cx(w, dw)
+        rx = lx + dw // 2
 
-        sr("wpm", f"{r['wpm']:.1f}", C_ACCENT, c1, ry)
-        sr("raw", f"{r['raw']:.1f}", C_STAT, c2, ry)
-        ry += 1
-        sr("accuracy", f"{r['acc']:.1f}%", C_GOOD if r['acc'] >= 90 else C_BAD, c1, ry)
-        sr("time", f"{r['time']:.1f}s", C_ACCENT, c2, ry)
-        ry += 1
-        sr("correct", str(r['ok']), C_GOOD, c1, ry)
-        sr("incorrect", str(r['bad']), C_BAD, c2, ry)
-        ry += 2
+        def stat(row, label, val, cp, x):
+            put(scr, row, x, label, C_DIM)
+            put(scr, row, x + len(label), str(val), cp, curses.A_BOLD)
 
-        blen = min(int(r['wpm']), bw - 6)
-        put(scr, ry, c1, "█" * max(blen, 1), C_ACCENT)
-        ry += 2
+        stat(y, "wpm  ", f"{r['wpm']:.1f}", C_ACCENT, lx)
+        stat(y, "raw  ", f"{r['raw']:.1f}", C_STAT, rx)
+        y += 1
+        stat(y, "acc  ", f"{r['acc']:.1f}%", acp, lx)
+        stat(y, "time ", f"{r['time']:.1f}s", C_ACCENT, rx)
+        y += 1
+        stat(y, "ok   ", str(r['ok']), C_GOOD, lx)
+        stat(y, "err  ", str(r['bad']), C_BAD, rx)
+        y += 2
 
-        if r['acc'] >= 97 and r['wpm'] >= 80:
-            putc(scr, ry, w, "blazing", C_ACCENT, curses.A_BOLD)
-        elif r['acc'] >= 95 and r['wpm'] >= 60:
-            putc(scr, ry, w, "great", C_GOOD, curses.A_BOLD)
-        elif r['acc'] >= 90:
-            putc(scr, ry, w, "solid", C_STAT, curses.A_BOLD)
-        elif r['acc'] >= 80:
-            putc(scr, ry, w, "keep practicing", C_DIM, curses.A_BOLD)
-        else:
-            putc(scr, ry, w, "slow down, focus on accuracy", C_BAD, curses.A_BOLD)
+        # divider
+        putc(scr, y, w, "-" * dw, C_BORDER)
+        y += 2
 
+        # rating
+        putc(scr, y, w, rating, rcp, curses.A_BOLD)
+        y += 2
+
+        # mode
+        putc(scr, y, w, f"{TIMES[ti]}s  {DIFFS[di]}", C_DIM)
+
+        # missed chars
         if has_errs:
-            ry += 2
+            y += 2
             top = sorted(r['errs'].items(), key=lambda x: -x[1])[:6]
-            putc(scr, ry, w, "missed: " + "  ".join(f"'{c}'x{n}" for c, n in top), C_DIM)
+            putc(scr, y, w, "missed: " + "  ".join(f"'{c}'x{n}" for c, n in top), C_DIM)
 
-        putc(scr, h - 3, w, f"{TIMES[ti]}s  {DIFFS[di]}", C_DIM)
+        # bottom hint
         putc(scr, h - 1, w, "tab restart   esc new test   q quit", C_HINT)
         scr.refresh()
 
