@@ -98,7 +98,7 @@ def get_update_info():
         pass
 
     if info["install_method"] == "brew":
-        info["update_cmd"] = "brew upgrade typer"
+        info["update_cmd"] = "brew update && brew upgrade typer"
     else:
         info["update_cmd"] = "pip install --upgrade typer-cli-tool"
 
