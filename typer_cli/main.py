@@ -495,7 +495,13 @@ def entry():
     parser.add_argument("-d", "--diff", type=str, metavar="LEVEL",
                         choices=["easy", "medium", "hard"],
                         help="difficulty (easy, medium, hard)")
+    parser.add_argument("--skip-update-check", action="store_true",
+                        help="skip the update check on startup")
     args = parser.parse_args()
+
+    if not args.skip_update_check:
+        from typer_cli.update import prompt_update
+        prompt_update()
 
     try:
         curses.wrapper(lambda scr: run(scr, args))
