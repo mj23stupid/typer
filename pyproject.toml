@@ -10,11 +10,20 @@ readme = "README.md"
 license = "MIT"
 requires-python = ">=3.8"
 authors = [{ name = "Will Gerstung" }]
-keywords = ["typing", "wpm", "terminal", "cli", "practice"]
+keywords = [
+    "typing", "typing-test", "typing-speed", "typing-practice",
+    "wpm", "terminal", "cli", "monkeytype", "speed-typing",
+    "keyboard", "curses", "typing-game", "touch-typing",
+]
 classifiers = [
     "Environment :: Console :: Curses",
     "Topic :: Games/Entertainment",
     "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: MacOS",
+    "Operating System :: POSIX :: Linux",
+    "Intended Audience :: End Users/Desktop",
+    "Intended Audience :: Developers",
 ]
 
 [tool.setuptools.packages.find]
