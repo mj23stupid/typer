@@ -205,6 +205,7 @@ def draw_text(scr, lines, typed, target, sy, sx, aw, sh):
     ss = max(0, min(cline - 1, len(lines) - vis))
     off = sum(len(lines[i]) + 1 for i in range(ss))
 
+    cursor_pos = None
     for li in range(ss, min(ss + vis, len(lines))):
         line = lines[li]
         y = sy + (li - ss)
@@ -220,10 +221,12 @@ def draw_text(scr, lines, typed, target, sy, sx, aw, sh):
                 at = curses.A_UNDERLINE if cp == C_ERR else 0
                 put(scr, y, x, ch, cp, at)
             elif ri == pos:
-                put(scr, y, x, ch, C_CURSOR, curses.A_BOLD)
+                put(scr, y, x, ch, C_DIM)
+                cursor_pos = (y, x)
             else:
                 put(scr, y, x, ch, C_DIM)
         off += len(line) + 1
+    return cursor_pos
 
 
 # ── main test loop ───────────────────────────────────────────────────────────
@@ -289,7 +292,7 @@ def test(scr, ti, di, update_info=None):
             draw_logo(scr, logo_y, w)
             hit_regions = draw_settings(scr, settings_y, w, ti, di, False)
             putc(scr, timer_y, w, f"{tlimit}s", C_ACCENT, curses.A_BOLD)
-            draw_text(scr, lines, typed, target, text_y, tx, aw, h)
+            cpos = draw_text(scr, lines, typed, target, text_y, tx, aw, h)
             putc(scr, hint_y, w, "start typing...", C_DIM)
             if update_info and update_info["update_available"]:
                 notice = f"v{update_info['latest']} available: {update_info['update_cmd']}"
@@ -302,8 +305,22 @@ def test(scr, ti, di, update_info=None):
                 put(scr, h - 1, w - len(user_name) - 1, user_name, C_DIM)
         else:
             draw_stats(scr, stats_y, w, target, typed, elapsed, remain)
-            draw_text(scr, lines, typed, target, text_y, tx, aw, h)
+            cpos = draw_text(scr, lines, typed, target, text_y, tx, aw, h)
             putc(scr, h - 1, w, "tab restart   ^q quit", C_HINT)
+
+        # show line cursor at current typing position
+        if cpos:
+            try:
+                sys.stdout.write("\033[6 q")  # steady bar cursor
+                sys.stdout.flush()
+                curses.curs_set(1)
+                scr.move(cpos[0], cpos[1])
+            except curses.error:
+                pass
+        else:
+            sys.stdout.write("\033[0 q")  # restore default cursor
+            sys.stdout.flush()
+            curses.curs_set(0)
 
         scr.refresh()
 
@@ -312,8 +329,12 @@ def test(scr, ti, di, update_info=None):
         if k == -1:
             continue
         if k == 17:  # ctrl+q
+            sys.stdout.write("\033[0 q")
+            sys.stdout.flush()
             return None, ti, di
         if k == 9:  # tab
+            sys.stdout.write("\033[0 q")
+            sys.stdout.flush()
             return "restart", ti, di
 
         # mouse clicks (only before test starts)
@@ -380,6 +401,8 @@ def test(scr, ti, di, update_info=None):
         elif 32 <= k <= 126 and len(typed) < len(target):
             typed.append(chr(k))
 
+    sys.stdout.write("\033[0 q")
+    sys.stdout.flush()
     elapsed = time.time() - t0 if started else 0.001
     return calc_results(target, typed, elapsed), ti, di
 

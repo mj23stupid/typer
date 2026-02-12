@@ -6,7 +6,7 @@ NOUNS_EASY = [
     "cat", "dog", "bird", "fish", "tree", "road", "sun", "moon", "rain",
     "book", "door", "house", "wall", "room", "bed", "chair", "table", "lamp",
     "cup", "hat", "coat", "shoe", "bag", "box", "key", "bell", "boat", "car",
-    "bus", "hill", "lake", "farm", "park", "shop", "town", "school", "road",
+    "bus", "hill", "lake", "farm", "park", "shop", "town", "school",
     "path", "gate", "yard", "roof", "fire", "wind", "snow", "sky", "star",
     "rock", "leaf", "hand", "face", "eye", "song", "game", "ball", "toy",
     "boy", "girl", "man", "child", "baby", "king", "cook", "nurse", "clerk",
@@ -16,6 +16,15 @@ NOUNS_EASY = [
     "coin", "rope", "drum", "ring", "map", "pen", "page", "sign", "step",
     "meal", "dream", "smile", "voice", "story", "color", "night", "river",
     "stone", "cloud", "grass", "floor", "plate", "glass", "shirt", "dress",
+    "arm", "leg", "head", "neck", "foot", "bone", "hair", "tooth",
+    "egg", "pie", "jam", "tea", "nut", "corn", "rice", "pear",
+    "vine", "clay", "dust", "sand", "wave", "tide", "field", "stream",
+    "ant", "bee", "owl", "pig", "hen", "cub", "crow", "hawk",
+    "fork", "knife", "spoon", "bowl", "pot", "pan", "jar", "tray",
+    "bank", "port", "cave", "shed", "bench", "fence", "lane", "trail",
+    "rule", "word", "line", "mark", "note", "spot", "job", "task",
+    "chain", "wheel", "hook", "nail", "shelf", "frame", "tape", "straw",
+    "beach", "storm", "flame", "frost", "fog", "marsh", "branch", "trunk",
 ]
 
 NOUNS_MEDIUM = [
@@ -37,6 +46,20 @@ NOUNS_MEDIUM = [
     "surface", "pattern", "signal", "method", "reason", "problem",
     "answer", "moment", "feeling", "opinion", "message", "purpose",
     "weather", "season", "morning", "evening", "century", "chapter",
+    "balcony", "terrace", "corridor", "cellar", "attic", "workshop",
+    "cathedral", "fortress", "pavilion", "monument", "sculpture", "tapestry",
+    "garment", "pendant", "artifact", "envelope", "document", "calendar",
+    "uniform", "chimney", "stairway", "gateway", "archway", "doorway",
+    "musician", "detective", "professor", "commander", "inspector", "inventor",
+    "pioneer", "ancestor", "waterfall", "cavern", "lagoon", "prairie",
+    "woodland", "hillside", "thicket", "clearing", "ambition", "courage",
+    "patience", "wisdom", "sorrow", "triumph", "conflict", "harmony",
+    "spectacle", "interval", "boundary", "obstacle", "companion", "remnant",
+    "district", "province", "mansion", "council", "carriage", "riddle",
+    "marvel", "burden", "emblem", "menace", "doctrine", "essence",
+    "counsel", "turmoil", "platform", "fragment", "notion", "symbol",
+    "frontier", "outlook", "prospect", "downfall", "legacy", "virtue",
+    "tempest", "dungeon", "summit", "refuge", "banner", "cloister",
 ]
 
 NOUNS_HARD = [
@@ -50,6 +73,14 @@ NOUNS_HARD = [
     "connoisseur", "entrepreneur", "acquaintance", "correspondent",
     "accomplishment", "circumstance", "reconnaissance", "discrepancy",
     "idiosyncrasy", "kaleidoscope", "paraphernalia", "quintessence",
+    "anachronism", "juxtaposition", "dichotomy", "epitome", "paradigm",
+    "pedagogy", "hierarchy", "cacophony", "soliloquy", "epiphany",
+    "metamorphosis", "nomenclature", "perseverance", "serendipity",
+    "anthropology", "bibliography", "chronology", "cosmopolitan",
+    "deterioration", "magnanimity", "proclivity", "vicissitude",
+    "machination", "conflagration", "jurisprudence", "antithesis",
+    "catharsis", "diaspora", "hegemony", "synthesis", "symposium",
+    "meritocracy", "incandescence", "effervescence",
 ]
 
 # ── nouns (plural) ───────────────────────────────────────────────────────────
@@ -63,6 +94,15 @@ NOUNS_PL_EASY = [
     "pages", "signs", "steps", "meals", "dreams", "voices", "stories",
     "clouds", "stones", "plates", "floors", "children", "horses", "foxes",
     "wolves", "mice", "leaves", "nights", "rivers", "colors", "smiles",
+    "arms", "legs", "heads", "necks", "feet", "bones", "teeth", "eggs",
+    "pies", "nuts", "fields", "streams", "ants", "bees", "owls", "pigs",
+    "hens", "crows", "hawks", "forks", "knives", "spoons", "bowls", "pots",
+    "pans", "jars", "trays", "caves", "sheds", "fences", "lanes", "trails",
+    "rules", "words", "lines", "marks", "notes", "spots", "jobs", "tasks",
+    "chains", "wheels", "hooks", "nails", "shelves", "frames", "waves",
+    "tides", "vines", "storms", "flames", "branches", "trunks", "beaches",
+    "banks", "ports", "benches", "roots", "weeds", "thorns", "pools", "logs",
+    "ropes", "shirts", "dresses", "frogs", "ducks", "goats", "flags", "ponds",
 ]
 
 NOUNS_PL_MEDIUM = [
@@ -76,6 +116,18 @@ NOUNS_PL_MEDIUM = [
     "kingdoms", "chambers", "surfaces", "patterns", "signals", "reasons",
     "problems", "answers", "moments", "feelings", "opinions", "messages",
     "seasons", "mornings", "evenings", "centuries", "chapters", "victories",
+    "balconies", "terraces", "corridors", "cellars", "workshops", "cathedrals",
+    "fortresses", "pavilions", "monuments", "sculptures", "tapestries",
+    "garments", "artifacts", "envelopes", "documents", "calendars",
+    "musicians", "detectives", "professors", "commanders", "inspectors",
+    "inventors", "pioneers", "ancestors", "waterfalls", "caverns", "lagoons",
+    "prairies", "woodlands", "hillsides", "thickets", "clearings",
+    "ambitions", "spectacles", "intervals", "boundaries", "obstacles",
+    "companions", "remnants", "districts", "provinces", "mansions",
+    "councils", "carriages", "riddles", "marvels", "burdens", "emblems",
+    "doctrines", "fragments", "notions", "symbols", "frontiers", "prospects",
+    "legacies", "virtues", "tempests", "dungeons", "summits", "refuges",
+    "banners",
 ]
 
 NOUNS_PL_HARD = [
@@ -83,6 +135,11 @@ NOUNS_PL_HARD = [
     "hemispheres", "consequences", "predicaments", "atmospheres", "paradoxes",
     "metaphors", "hypotheses", "algorithms", "expeditions", "constellations",
     "accomplishments", "circumstances", "discrepancies", "kaleidoscopes",
+    "anachronisms", "juxtapositions", "dichotomies", "epitomes", "paradigms",
+    "hierarchies", "soliloquies", "epiphanies", "metamorphoses",
+    "bibliographies", "vicissitudes", "machinations", "conflagrations",
+    "antitheses", "diasporas", "symposia", "transgressions", "proclivities",
+    "syntheses", "deteriorations", "idiosyncrasies",
 ]
 
 # ── proper names ─────────────────────────────────────────────────────────────
@@ -96,6 +153,12 @@ NAMES = [
     "Iris", "Hugo", "Vera", "Max", "Nora", "Paul", "Lily", "Oscar",
     "June", "Miles", "Ella", "Simon", "Jane", "Victor", "Eve", "Martin",
     "Hazel", "Albert", "Ivy", "Louis", "Alma", "Walter", "Flora", "Leo",
+    "Philip", "Raymond", "Harold", "Bernard", "Lionel", "Edmund", "Roland",
+    "Conrad", "Martha", "Agnes", "Edith", "Pearl", "Mabel", "Cora",
+    "Estelle", "Lydia", "Calvin", "Ernest", "Gilbert", "Warren", "Lena",
+    "Owen", "Cecil", "Wilma", "Faye", "Seth", "Nina", "Karl", "Greta",
+    "Anton", "Stella", "Milo", "Naomi", "Basil", "Petra", "Robin",
+    "Claude", "Maude", "Rex",
 ]
 
 # ── verbs (past tense) ──────────────────────────────────────────────────────
@@ -109,6 +172,15 @@ VERBS_PAST_EASY = [
     "liked", "loved", "hoped", "moved", "used", "lived", "played", "asked",
     "tried", "walked", "looked", "turned", "called", "needed", "worked",
     "pulled", "picked", "pushed", "dropped", "washed", "filled", "saved",
+    "bit", "dug", "fed", "flew", "hid", "blew", "broke", "built",
+    "burned", "bought", "brought", "caught", "chose", "drank", "drove",
+    "fought", "forgot", "froze", "jumped", "kicked", "kissed", "knocked",
+    "laughed", "learned", "lifted", "missed", "named", "passed", "prayed",
+    "rained", "rubbed", "rushed", "served", "shaped", "shared", "showed",
+    "slept", "smiled", "spoke", "stood", "stopped", "swept", "swam",
+    "swore", "threw", "tied", "touched", "waved", "wished", "yelled",
+    "aimed", "begged", "blessed", "bowed", "clapped", "crawled", "cried",
+    "danced",
 ]
 
 VERBS_PAST_MEDIUM = [
@@ -123,6 +195,16 @@ VERBS_PAST_MEDIUM = [
     "rescued", "scattered", "trembled", "troubled", "vanished", "welcomed",
     "arranged", "borrowed", "composed", "discovered", "embraced", "examined",
     "traveled", "delivered", "abandoned", "collected", "destroyed", "survived",
+    "absorbed", "achieved", "admired", "advanced", "altered", "appeared",
+    "assembled", "attached", "attempted", "avoided", "beckoned", "bordered",
+    "celebrated", "challenged", "circled", "commanded", "compared", "completed",
+    "concealed", "condemned", "confirmed", "connected", "conquered", "convinced",
+    "corrected", "created", "darkened", "departed", "described", "designed",
+    "detected", "directed", "disturbed", "divided", "elevated", "emerged",
+    "employed", "enclosed", "endured", "engaged", "enriched", "envisioned",
+    "established", "exhausted", "expanded", "fashioned", "flickered",
+    "flourished", "focused", "fractured", "fumbled", "harbored", "hesitated",
+    "hindered", "lingered", "marveled", "mentioned", "mourned",
 ]
 
 VERBS_PAST_HARD = [
@@ -133,6 +215,12 @@ VERBS_PAST_HARD = [
     "illuminated", "inaugurated", "manipulated", "necessitated", "orchestrated",
     "overwhelmed", "persevered", "proliferated", "rationalized", "reverberated",
     "scrutinized", "surrendered", "sympathized", "transcended", "underestimated",
+    "accommodated", "adjudicated", "amalgamated", "authenticated", "capitulated",
+    "circumnavigated", "conceptualized", "corroborated", "disillusioned",
+    "disseminated", "extrapolated", "hallucinated", "hypothesized",
+    "incapacitated", "interrogated", "miscalculated", "overcompensated",
+    "procrastinated", "rehabilitated", "substantiated", "predominated",
+    "communicated", "differentiated", "impersonated", "investigated",
 ]
 
 # ── verbs (3rd person present) ───────────────────────────────────────────────
@@ -145,6 +233,12 @@ VERBS_PRES_EASY = [
     "sings", "shuts", "sells", "wears", "likes", "loves", "hopes", "moves",
     "uses", "lives", "plays", "asks", "tries", "walks", "looks", "turns",
     "calls", "needs", "works", "pulls", "picks", "drops", "fills", "saves",
+    "bites", "digs", "feeds", "flies", "hides", "blows", "breaks", "builds",
+    "burns", "buys", "brings", "catches", "drinks", "drives", "fights",
+    "forgets", "freezes", "jumps", "kicks", "knocks", "laughs", "learns",
+    "lifts", "misses", "names", "passes", "rains", "rushes", "serves",
+    "shapes", "shares", "shows", "sleeps", "smiles", "speaks", "stands",
+    "stops", "sweeps", "swims", "throws", "ties", "touches", "waves",
 ]
 
 VERBS_PRES_MEDIUM = [
@@ -157,6 +251,14 @@ VERBS_PRES_MEDIUM = [
     "escapes", "inspires", "launches", "polishes", "recalls", "rescues",
     "scatters", "trembles", "vanishes", "welcomes", "arranges", "composes",
     "discovers", "examines", "embraces", "delivers", "collects", "survives",
+    "absorbs", "achieves", "admires", "advances", "alters", "appears",
+    "assembles", "attaches", "attempts", "avoids", "beckons", "borders",
+    "celebrates", "challenges", "circles", "commands", "compares", "completes",
+    "conceals", "condemns", "confirms", "connects", "conquers", "convinces",
+    "corrects", "creates", "darkens", "departs", "describes", "designs",
+    "detects", "directs", "disturbs", "divides", "elevates", "emerges",
+    "employs", "encloses", "endures", "engages", "enriches", "envisions",
+    "establishes", "exhausts", "expands", "fashions", "flickers", "flourishes",
 ]
 
 # ── verbs (base/infinitive) ─────────────────────────────────────────────────
@@ -169,6 +271,13 @@ VERBS_BASE_EASY = [
     "like", "love", "hope", "move", "use", "live", "play", "ask", "try",
     "walk", "look", "turn", "call", "need", "work", "pull", "pick", "drop",
     "fill", "save", "rest", "wait", "help", "pass", "stay", "hide", "swim",
+    "bite", "dig", "feed", "fly", "blow", "break", "build", "burn",
+    "buy", "bring", "catch", "choose", "drink", "drive", "fight", "forget",
+    "freeze", "jump", "kick", "kiss", "knock", "laugh", "learn", "lift",
+    "miss", "name", "pray", "rain", "rub", "rush", "serve", "shape",
+    "share", "show", "sleep", "smile", "speak", "stand", "stop", "sweep",
+    "swear", "throw", "tie", "touch", "wave", "wish", "aim", "beg",
+    "bless", "bow", "clap", "crawl", "cry", "dance", "yell",
 ]
 
 VERBS_BASE_MEDIUM = [
@@ -181,6 +290,13 @@ VERBS_BASE_MEDIUM = [
     "tremble", "vanish", "welcome", "arrange", "compose", "discover",
     "examine", "embrace", "deliver", "collect", "survive", "approach",
     "consider", "establish", "maintain", "remember", "understand", "continue",
+    "absorb", "achieve", "admire", "advance", "alter", "appear",
+    "assemble", "attach", "attempt", "avoid", "beckon", "border",
+    "celebrate", "challenge", "circle", "command", "compare", "complete",
+    "conceal", "condemn", "confirm", "connect", "conquer", "convince",
+    "correct", "create", "darken", "depart", "describe", "design",
+    "detect", "direct", "disturb", "divide", "elevate", "emerge",
+    "employ", "enclose", "endure", "engage",
 ]
 
 # ── verbs (gerund / -ing) ───────────────────────────────────────────────────
@@ -192,6 +308,12 @@ VERBS_ING_EASY = [
     "trying", "living", "moving", "using", "hoping", "loving",
     "pulling", "picking", "dropping", "filling", "saving", "hiding",
     "waiting", "resting", "helping", "singing", "riding", "drawing",
+    "biting", "digging", "feeding", "flying", "blowing", "breaking",
+    "building", "burning", "buying", "bringing", "catching", "drinking",
+    "driving", "fighting", "jumping", "kicking", "kissing", "knocking",
+    "laughing", "learning", "lifting", "missing", "naming", "passing",
+    "rushing", "sleeping", "smiling", "speaking", "standing", "stopping",
+    "swimming", "throwing", "tying", "waving",
 ]
 
 VERBS_ING_MEDIUM = [
@@ -204,6 +326,15 @@ VERBS_ING_MEDIUM = [
     "capturing", "defending", "escaping", "inspiring", "polishing",
     "recalling", "rescuing", "trembling", "vanishing", "arranging",
     "composing", "discovering", "examining", "embracing", "delivering",
+    "absorbing", "achieving", "admiring", "advancing", "altering",
+    "appearing", "assembling", "attaching", "attempting", "avoiding",
+    "beckoning", "bordering", "celebrating", "challenging", "circling",
+    "commanding", "comparing", "completing", "concealing", "condemning",
+    "confirming", "connecting", "conquering", "convincing", "correcting",
+    "creating", "darkening", "departing", "describing", "designing",
+    "detecting", "directing", "disturbing", "dividing", "elevating",
+    "emerging", "employing", "enclosing", "enduring", "engaging",
+    "enriching", "envisioning", "expanding",
 ]
 
 # ── adjectives ───────────────────────────────────────────────────────────────
@@ -217,6 +348,14 @@ ADJ_EASY = [
     "fine", "red", "blue", "green", "white", "black", "gray", "brown",
     "pale", "round", "sharp", "plain", "fresh", "clear", "sweet", "young",
     "quiet", "loud", "strong", "weak", "quick", "rare", "late", "early",
+    "rough", "smooth", "thick", "tight", "loose", "dull", "odd", "neat",
+    "sick", "bare", "blind", "brief", "broad", "cheap", "cruel", "dense",
+    "dim", "fierce", "firm", "fit", "fond", "foul", "grim", "harsh",
+    "keen", "lame", "lean", "mad", "mere", "mild", "mute", "numb",
+    "pink", "proud", "pure", "ripe", "rude", "shy", "slight", "slim",
+    "smart", "sore", "stiff", "strict", "tense", "tough", "vast", "wise",
+    "worn", "blunt", "coarse", "crisp", "cute", "deaf", "faint", "false",
+    "grand", "grave", "gross", "limp", "lone", "steep", "stale", "stern",
 ]
 
 ADJ_MEDIUM = [
@@ -230,6 +369,15 @@ ADJ_MEDIUM = [
     "important", "beautiful", "dangerous", "difficult", "delicate", "graceful",
     "brilliant", "charming", "dreadful", "faithful", "generous", "innocent",
     "restless", "tireless", "watchful", "colorful", "cheerful", "doubtful",
+    "absent", "active", "alert", "anxious", "barren", "blissful", "boundless",
+    "careless", "certain", "classic", "complex", "constant", "content",
+    "costly", "countless", "crafty", "cunning", "earnest", "endless",
+    "fearless", "fertile", "flawless", "fluent", "foolish", "foreign",
+    "fragrant", "frequent", "gallant", "ghastly", "gleaming", "gloomy",
+    "handsome", "haunted", "hopeful", "hostile", "joyful", "lawless",
+    "likely", "lively", "lonesome", "loyal", "modest", "mortal", "nervous",
+    "noble", "painless", "passive", "playful", "pointed", "precious",
+    "reckless", "rigid", "rugged", "ruthless", "shallow", "solemn",
 ]
 
 ADJ_HARD = [
@@ -239,6 +387,12 @@ ADJ_HARD = [
     "idiosyncratic", "quintessential", "unequivocal", "ostentatious",
     "surreptitious", "contemptible", "indefatigable", "imperceptible",
     "irreconcilable", "magnanimous", "perspicacious", "phantasmagorical",
+    "ambiguous", "anomalous", "benevolent", "clandestine", "contemptuous",
+    "obstreperous", "derogatory", "disingenuous", "efficacious", "ephemeral",
+    "fortuitous", "gratuitous", "impenetrable", "inconceivable",
+    "indispensable", "ineffable", "insurmountable", "labyrinthine",
+    "melancholic", "nondescript", "paradoxical", "perfunctory",
+    "presumptuous", "sacrilegious", "superfluous",
 ]
 
 # ── adverbs ──────────────────────────────────────────────────────────────────
@@ -247,6 +401,9 @@ ADV_EASY = [
     "very", "just", "well", "also", "here", "then", "soon", "still", "never",
     "always", "often", "once", "again", "away", "down", "up", "now", "fast",
     "hard", "far", "near", "back", "even", "only", "almost", "quite",
+    "yet", "too", "so", "out", "off", "long", "much", "most",
+    "more", "less", "last", "first", "next", "right", "left", "straight",
+    "ahead", "alone", "apart", "aloud", "aside", "forth", "twice", "thus",
 ]
 
 ADV_MEDIUM = [
@@ -258,13 +415,27 @@ ADV_MEDIUM = [
     "sharply", "brightly", "carefully", "silently", "suddenly", "properly",
     "steadily", "patiently", "honestly", "entirely", "politely", "precisely",
     "gracefully", "endlessly", "restlessly", "faithfully", "peacefully",
+    "warmly", "coolly", "fiercely", "lightly", "tightly", "loosely",
+    "roughly", "smoothly", "blindly", "briefly", "broadly", "cheaply",
+    "cruelly", "dimly", "fondly", "grimly", "harshly", "keenly", "madly",
+    "mildly", "nobly", "plainly", "rudely", "shyly", "smartly", "stiffly",
+    "strictly", "sweetly", "vaguely", "wisely", "badly", "freely", "freshly",
+    "fully", "highly", "kindly", "truly", "weakly", "wildly", "actively",
+    "bitterly", "commonly", "constantly", "directly", "earnestly", "formally",
+    "modestly", "nervously", "solemnly",
 ]
+
+# ── adverbs (hard) ───────────────────────────────────────────────────────────
 
 ADV_HARD = [
     "meticulously", "spontaneously", "simultaneously", "unquestionably",
     "conscientiously", "indiscriminately", "inconspicuously", "magnanimously",
     "surreptitiously", "extraordinarily", "incomprehensibly", "unequivocally",
     "disproportionately", "incontrovertibly", "characteristically",
+    "ostentatiously", "perfunctorily", "perspicaciously", "presumptuously",
+    "quintessentially", "idiosyncratically", "imperceptibly", "irreconcilably",
+    "fortuitously", "gratuitously", "clandestinely", "efficaciously",
+    "unceremoniously", "disingenuously", "insurmountably",
 ]
 
 # ── prepositions ─────────────────────────────────────────────────────────────
@@ -287,6 +458,11 @@ TIME_PHRASES = [
     "the following day", "one quiet evening", "on a cold night",
     "during the storm", "before sunrise", "after sunset", "by then",
     "at that moment", "without warning", "all at once", "once again",
+    "that autumn", "last autumn", "every afternoon", "for several days",
+    "at first light", "in the distance", "the night before", "one summer day",
+    "on a clear morning", "after the rain", "before nightfall", "at twilight",
+    "the week before", "many months later", "in early spring",
+    "late that night", "on the final day", "from that day on",
 ]
 
 # ── pool builder ─────────────────────────────────────────────────────────────
