@@ -398,6 +398,18 @@ def test(scr, ti, di, update_info=None, theme_name="default"):
         if k in (curses.KEY_BACKSPACE, 127, 8):
             if typed:
                 typed.pop()
+        elif k == 32 and len(typed) < len(target):
+            pos = len(typed)
+            if target[pos] == ' ':
+                typed.append(' ')
+            else:
+                # early space: skip to next word
+                next_space = target.find(' ', pos)
+                if next_space == -1:
+                    typed.append(' ')
+                else:
+                    while len(typed) <= next_space and len(typed) < len(target):
+                        typed.append(' ')
         elif 32 <= k <= 126 and len(typed) < len(target):
             typed.append(chr(k))
 
