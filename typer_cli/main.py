@@ -255,7 +255,7 @@ def test(scr, ti, di, update_info=None, theme_name="default"):
         if h < 10 or w < 40:
             scr.addstr(0, 0, "terminal too small!")
             scr.refresh()
-            if scr.getch() == 17:  # ctrl+q
+            if scr.getch() == 27:  # esc
                 return None, ti, di, theme_name
             continue
 
@@ -289,8 +289,8 @@ def test(scr, ti, di, update_info=None, theme_name="default"):
             putc(scr, hint_y, w, "start typing...", C_DIM)
             if update_info and update_info["update_available"]:
                 notice = f"v{update_info['latest']} available: {update_info['update_cmd']}"
-                putc(scr, h - 2, w, notice, C_DIM)
-            putc(scr, h - 1, w, "s stats   t theme   tab new words   ^q quit", C_HINT)
+                putc(scr, h - 2, w, notice, C_BAD)
+            putc(scr, h - 1, w, "s stats   t theme   tab new words   esc quit", C_HINT)
             ver = f"v{update_info['version']}" if update_info else ""
             if ver:
                 put(scr, h - 1, 1, ver, C_DIM)
@@ -300,7 +300,7 @@ def test(scr, ti, di, update_info=None, theme_name="default"):
         else:
             draw_stats(scr, stats_y, w, target, typed, elapsed, remain)
             cpos = draw_text(scr, lines, typed, target, text_y, tx, aw, h)
-            putc(scr, h - 1, w, "tab restart   ^q quit", C_HINT)
+            putc(scr, h - 1, w, "tab restart", C_HINT)
 
         # show line cursor at current typing position
         if cpos:
@@ -322,10 +322,6 @@ def test(scr, ti, di, update_info=None, theme_name="default"):
         k = scr.getch()
         if k == -1:
             continue
-        if k == 17:  # ctrl+q
-            sys.stdout.write("\033[0 q")
-            sys.stdout.flush()
-            return None, ti, di, theme_name
         if k == 9:  # tab
             sys.stdout.write("\033[0 q")
             sys.stdout.flush()
@@ -358,6 +354,10 @@ def test(scr, ti, di, update_info=None, theme_name="default"):
             continue
 
         if not started:
+            if k == 27:  # esc
+                sys.stdout.write("\033[0 q")
+                sys.stdout.flush()
+                return None, ti, di, theme_name
             if k == ord('s'):
                 return "stats", ti, di, theme_name
             if k == ord('t'):
@@ -589,8 +589,6 @@ def show_results(scr, r, ti, di, race=None):
         k = scr.getch()
         if k == 9:  # tab
             return "home"
-        elif k == 17:  # ctrl+q
-            return "quit"
 
 
 # ── stats screen ─────────────────────────────────────────────────────────────
@@ -757,11 +755,8 @@ def run(scr, args):
         # completed test — save, compute leaderboard, show results
         append_test(result, TIMES[ti], DIFFS[di])
         race = post_race_stats(result['wpm'])
-        action = show_results(scr, result, ti, di, race)
-        if action == "quit":
-            return
-        else:  # "home"
-            continue
+        show_results(scr, result, ti, di, race)
+        continue
 
 
 def entry():
