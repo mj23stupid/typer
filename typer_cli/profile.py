@@ -45,6 +45,17 @@ def set_name(name):
     return p
 
 
+def get_theme():
+    p = read_profile()
+    return p.get("theme", "default")
+
+
+def set_theme(name):
+    p = read_profile()
+    p["theme"] = name
+    write_profile(p)
+
+
 def append_test(result, time_limit, difficulty):
     p = read_profile()
     p["tests"].append({

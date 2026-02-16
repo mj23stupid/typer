@@ -7,8 +7,9 @@ from typer_cli.sentences import generate
 from typer_cli.update import get_update_info
 from typer_cli.profile import (
     profile_exists, read_profile, create_profile, append_test,
-    post_race_stats,
+    post_race_stats, get_theme, set_theme,
 )
+from typer_cli.themes import THEMES, THEME_NAMES
 
 # ── colors ───────────────────────────────────────────────────────────────────
 
@@ -25,20 +26,12 @@ C_BAD = 10
 C_HINT = 11
 
 
-def init_colors():
+def init_colors(theme_name="default"):
     curses.start_color()
     curses.use_default_colors()
-    curses.init_pair(C_DIM, 244, -1)
-    curses.init_pair(C_OK, 114, -1)
-    curses.init_pair(C_ERR, 203, -1)
-    curses.init_pair(C_CURSOR, 0, 214)
-    curses.init_pair(C_ACCENT, 214, -1)
-    curses.init_pair(C_STAT, 75, -1)
-    curses.init_pair(C_TITLE, 255, -1)
-    curses.init_pair(C_BORDER, 239, -1)
-    curses.init_pair(C_GOOD, 114, -1)
-    curses.init_pair(C_BAD, 203, -1)
-    curses.init_pair(C_HINT, 244, -1)
+    theme = THEMES.get(theme_name, THEMES["default"])
+    for pair_id, (fg, bg) in theme.items():
+        curses.init_pair(pair_id, fg, bg)
 
 
 # ── draw helpers ─────────────────────────────────────────────────────────────
@@ -231,7 +224,7 @@ def draw_text(scr, lines, typed, target, sy, sx, aw, sh):
 
 # ── main test loop ───────────────────────────────────────────────────────────
 
-def test(scr, ti, di, update_info=None):
+def test(scr, ti, di, update_info=None, theme_name="default"):
     curses.curs_set(0)
     scr.nodelay(True)
     scr.timeout(50)
@@ -263,7 +256,7 @@ def test(scr, ti, di, update_info=None):
             scr.addstr(0, 0, "terminal too small!")
             scr.refresh()
             if scr.getch() == 17:  # ctrl+q
-                return None, ti, di
+                return None, ti, di, theme_name
             continue
 
         # ── responsive text width ──
@@ -297,10 +290,11 @@ def test(scr, ti, di, update_info=None):
             if update_info and update_info["update_available"]:
                 notice = f"v{update_info['latest']} available: {update_info['update_cmd']}"
                 putc(scr, h - 2, w, notice, C_DIM)
-            putc(scr, h - 1, w, "s stats   tab new words   ^q quit", C_HINT)
+            putc(scr, h - 1, w, "s stats   t theme   tab new words   ^q quit", C_HINT)
             ver = f"v{update_info['version']}" if update_info else ""
             if ver:
                 put(scr, h - 1, 1, ver, C_DIM)
+                put(scr, h - 1, 1 + len(ver) + 2, theme_name, C_DIM)
             if user_name:
                 put(scr, h - 1, w - len(user_name) - 1, user_name, C_DIM)
         else:
@@ -331,11 +325,11 @@ def test(scr, ti, di, update_info=None):
         if k == 17:  # ctrl+q
             sys.stdout.write("\033[0 q")
             sys.stdout.flush()
-            return None, ti, di
+            return None, ti, di, theme_name
         if k == 9:  # tab
             sys.stdout.write("\033[0 q")
             sys.stdout.flush()
-            return "restart", ti, di
+            return "restart", ti, di, theme_name
 
         # mouse clicks (only before test starts)
         if k == curses.KEY_MOUSE and not started:
@@ -365,7 +359,13 @@ def test(scr, ti, di, update_info=None):
 
         if not started:
             if k == ord('s'):
-                return "stats", ti, di
+                return "stats", ti, di, theme_name
+            if k == ord('t'):
+                idx = THEME_NAMES.index(theme_name)
+                theme_name = THEME_NAMES[(idx + 1) % len(THEME_NAMES)]
+                init_colors(theme_name)
+                set_theme(theme_name)
+                continue
             # arrow keys for settings
             if k == curses.KEY_LEFT:
                 ti = (ti - 1) % len(TIMES)
@@ -404,7 +404,7 @@ def test(scr, ti, di, update_info=None):
     sys.stdout.write("\033[0 q")
     sys.stdout.flush()
     elapsed = time.time() - t0 if started else 0.001
-    return calc_results(target, typed, elapsed), ti, di
+    return calc_results(target, typed, elapsed), ti, di, theme_name
 
 
 # ── name prompt ──────────────────────────────────────────────────────────────
@@ -724,7 +724,10 @@ def show_stats(scr):
 # ── main ─────────────────────────────────────────────────────────────────────
 
 def run(scr, args):
-    init_colors()
+    theme_name = get_theme()
+    if theme_name not in THEMES:
+        theme_name = "default"
+    init_colors(theme_name)
     curses.curs_set(0)
 
     # first-launch: prompt for name
@@ -741,7 +744,7 @@ def run(scr, args):
     di = DIFFS.index(args.diff) if args.diff and args.diff in DIFFS else 1
 
     while True:
-        result, ti, di = test(scr, ti, di, update_info)
+        result, ti, di, theme_name = test(scr, ti, di, update_info, theme_name)
 
         if result is None:
             return
